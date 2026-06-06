@@ -2556,7 +2556,7 @@ function startSession(mode) {
   document.body.classList.remove('session-expired', 'student-blur');
 
   if (mode === 'student') {
-    timerSeconds = 30 * 60;
+    timerSeconds = 1 * 60;
     document.getElementById('timer-wrap').classList.add('visible');
     updateTimerDisplay();
     timerInterval = setInterval(tickTimer, 1000);
@@ -2591,7 +2591,7 @@ function updateTimerDisplay() {
   // Canvas arc ring
   const canvas = document.getElementById('timer-canvas');
   const ctx = canvas.getContext('2d');
-  const total = 1 * 60;
+  const total = 30 * 60;
   const frac = timerSeconds / total;
   const cx = 16, cy = 16, r = 13;
   ctx.clearRect(0, 0, 32, 32);
