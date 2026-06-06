@@ -2556,7 +2556,7 @@ function startSession(mode) {
   document.body.classList.remove('session-expired', 'student-blur');
 
   if (mode === 'student') {
-    timerSeconds = 1 * 60;
+    timerSeconds = 30 * 60;
     document.getElementById('timer-wrap').classList.add('visible');
     updateTimerDisplay();
     timerInterval = setInterval(tickTimer, 1000);
