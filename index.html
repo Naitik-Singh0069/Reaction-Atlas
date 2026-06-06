@@ -2494,7 +2494,7 @@ async function sha256(str) {
 
 // ── Session state ──
 let sessionMode = null;    
-let timerSeconds = 1 * 60; 
+let timerSeconds = 30 * 60; 
 let timerInterval = null;
 let sessionActive = false;
 
@@ -2591,7 +2591,7 @@ function updateTimerDisplay() {
   // Canvas arc ring
   const canvas = document.getElementById('timer-canvas');
   const ctx = canvas.getContext('2d');
-  const total = 30 * 60;
+  const total = 1 * 60;
   const frac = timerSeconds / total;
   const cx = 16, cy = 16, r = 13;
   ctx.clearRect(0, 0, 32, 32);
