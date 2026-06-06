@@ -683,9 +683,7 @@
     .rxn-product-preview { display: none; }
   }
 
-  /* ══════════════════════════════════════════
-     PASSWORD GATE
-  ══════════════════════════════════════════ */
+  /*-------GATE-------*/
   #gate {
     position: fixed;
     inset: 0;
@@ -841,9 +839,7 @@
     font-family: 'JetBrains Mono', monospace;
   }
 
-  /* ══════════════════════════════════════════
-     TIMER BAR (top-right of header)
-  ══════════════════════════════════════════ */
+  /* -------TIMER-------*/
   #timer-wrap {
     display: none;
     align-items: center;
@@ -897,9 +893,7 @@
     transform-origin: center;
   }
 
-  /* ══════════════════════════════════════════
-     SCREENSHOT BLOCKER OVERLAY
-  ══════════════════════════════════════════ */
+  /*-------SS OVERLAY----------*/
   #ss-block {
     display: none;
     position: fixed;
@@ -923,9 +917,7 @@
   }
   .ss-sub { font-size: 0.8rem; color: var(--muted); }
 
-  /* ══════════════════════════════════════════
-     EXPIRED OVERLAY
-  ══════════════════════════════════════════ */
+  /* ------EXP OVERLAY------ */
   #expired-overlay {
     display: none;
     position: fixed;
@@ -987,10 +979,6 @@
 </style>
 </head>
 <body>
-
-<!-- ══════════════════════════════════════════
-     PASSWORD GATE
-══════════════════════════════════════════ -->
 <div id="gate">
   <div class="gate-glow"></div>
   <div class="gate-box">
@@ -1007,18 +995,12 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SCREENSHOT BLOCKER
-══════════════════════════════════════════ -->
 <div id="ss-block">
   <div class="ss-icon">🚫</div>
   <div class="ss-msg">Screenshot Blocked</div>
   <div class="ss-sub">Screenshots are not permitted in student mode.</div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SESSION EXPIRED OVERLAY
-══════════════════════════════════════════ -->
 <div id="expired-overlay">
   <div class="exp-icon">⏰</div>
   <div class="exp-title">Session Expired</div>
@@ -1026,7 +1008,6 @@
   <button class="exp-btn" onclick="showGate()">Re-enter Passcode</button>
 </div>
 
-<!-- HEADER -->
 <header>
   <div class="logo">Reaction<span>Atlas</span></div>
   <div class="search-wrap">
@@ -1034,7 +1015,7 @@
     <input type="text" id="searchInput" placeholder="Search reagent, product, reaction..." autocomplete="off">
     <div id="search-results"></div>
   </div>
-  <!-- TIMER (only visible in student mode) -->
+
   <div id="timer-wrap">
     <div class="timer-label">Session</div>
     <div id="timer-display">30:00</div>
@@ -1045,10 +1026,8 @@
   </div>
 </header>
 
-<!-- APP -->
 <div class="app">
 
-  <!-- SIDEBAR -->
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-section">
       <div class="sidebar-cat">Navigation</div>
@@ -1092,14 +1071,10 @@
     </div>
   </nav>
 
-  <!-- MAIN -->
   <main class="main" id="main"></main>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════
-// DATA
-// ═══════════════════════════════════════════════════════════════════
 
 const REACTIONS = {
 
@@ -2495,30 +2470,15 @@ document.addEventListener('click', (e) => {
   if (!e.target.closest('.search-wrap')) searchResultsEl.classList.remove('active');
 });
 
-// ═══════════════════════════════════════════════════════════════════
-// ██████╗  █████╗ ███████╗███████╗██╗    ██╗ ██████╗ ██████╗ ██████╗
-// ██╔══██╗██╔══██╗██╔════╝██╔════╝██║    ██║██╔═══██╗██╔══██╗██╔══██╗
-// ██████╔╝███████║███████╗███████╗██║ █╗ ██║██║   ██║██████╔╝██║  ██║
-// ██╔═══╝ ██╔══██║╚════██|╚════██║██║███╗██║██║   ██║██╔══██╗██║  ██║
-// ██║     ██║  ██║███████║███████║╚███╔███╔╝╚██████╔╝██║  ██║██████╔╝
-// SECURITY SYSTEM
-// ═══════════════════════════════════════════════════════════════════
+  //PASS
+const STUDENT_HASH = '7a1f3c8e2b9d4a6f0e5c1b3d7a9f2e4c8b0d6a1e3f5c7b9d2a4f6e8c0b1d3e5';
+const TEAM_HASH    = 'f3e1b9c7d5a2f0e8c6b4d2a0f9e7c5b3d1a9f7e5c3b1d9a7f5e3c1b9d7a5f3e1';
 
-// ── Passwords (hashed at runtime via SHA-256) ──
-// STUDENT password  → "react2025"   (30-min timer, screenshot blocked)
-// TEAM    password  → "atlas#admin"  (no timer, no screenshot block)
-// Change these hashes to change the passwords (use the hashPassword helper below)
-
-const STUDENT_HASH = '7a1f3c8e2b9d4a6f0e5c1b3d7a9f2e4c8b0d6a1e3f5c7b9d2a4f6e8c0b1d3e5'; // placeholder
-const TEAM_HASH    = 'f3e1b9c7d5a2f0e8c6b4d2a0f9e7c5b3d1a9f7e5c3b1d9a7f5e3c1b9d7a5f3e1'; // placeholder
-
-// Runtime-generate real hashes from the actual passwords:
 const PASSWORDS = {
   student: 'react2025',
   team: 'atlas#admin'
 };
 
-// We'll store resolved hashes here after page load
 let resolvedStudentHash = '';
 let resolvedTeamHash = '';
 
@@ -2527,15 +2487,14 @@ async function sha256(str) {
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
-// Pre-resolve hashes
 (async () => {
   resolvedStudentHash = await sha256(PASSWORDS.student);
   resolvedTeamHash    = await sha256(PASSWORDS.team);
 })();
 
 // ── Session state ──
-let sessionMode = null;     // 'student' | 'team'
-let timerSeconds = 30 * 60; // 30 minutes
+let sessionMode = null;    
+let timerSeconds = 1 * 60; 
 let timerInterval = null;
 let sessionActive = false;
 
@@ -2597,15 +2556,12 @@ function startSession(mode) {
   document.body.classList.remove('session-expired', 'student-blur');
 
   if (mode === 'student') {
-    // Start 30-min countdown
     timerSeconds = 30 * 60;
     document.getElementById('timer-wrap').classList.add('visible');
     updateTimerDisplay();
     timerInterval = setInterval(tickTimer, 1000);
-    // Block tab switch / window hide
     document.addEventListener('visibilitychange', onVisibilityChange);
   } else {
-    // Team mode: no timer, full access
     document.getElementById('timer-wrap').classList.remove('visible');
   }
 }
@@ -2672,7 +2628,6 @@ function expireSession() {
 // SCREENSHOT PROTECTION (student mode only)
 // ═══════════════════════════════════════════════════════════════════
 
-// Method 1: Block PrintScreen key and common screenshot shortcuts
 document.addEventListener('keydown', (e) => {
   if (sessionMode !== 'student') return;
 
@@ -2680,43 +2635,36 @@ document.addEventListener('keydown', (e) => {
   const isCtrl = e.ctrlKey || e.metaKey;
   const isShift = e.shiftKey;
 
-  // PrintScreen
   if (e.key === 'PrintScreen') {
     e.preventDefault();
     triggerSSBlock();
     return;
   }
 
-  // Ctrl+P (print = screenshot workaround)
   if (isCtrl && key === 'p') {
     e.preventDefault();
     triggerSSBlock();
     return;
   }
 
-  // Ctrl+Shift+S (common save/screenshot)
   if (isCtrl && isShift && key === 's') {
     e.preventDefault();
     triggerSSBlock();
     return;
   }
 
-  // Ctrl+Shift+I / F12 (DevTools — can screenshot from there)
   if ((isCtrl && isShift && key === 'i') || e.key === 'F12') {
     e.preventDefault();
     triggerSSBlock();
     return;
   }
 
-  // Windows Snipping Tool shortcut: Win+Shift+S triggers visibilitychange
-  // Mac: Cmd+Shift+3 / Cmd+Shift+4 / Cmd+Shift+5
   if (isCtrl && isShift && (key === '3' || key === '4' || key === '5')) {
     e.preventDefault();
     triggerSSBlock();
     return;
   }
 
-  // Ctrl+Shift+P (Chrome screenshot command palette)
   if (isCtrl && isShift && key === 'p') {
     e.preventDefault();
     triggerSSBlock();
@@ -2724,29 +2672,23 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Method 2: Right-click context menu disabled in student mode
 document.addEventListener('contextmenu', (e) => {
   if (sessionMode !== 'student') return;
   e.preventDefault();
   triggerSSBlock();
 });
 
-// Method 3: Visibility change — tab switched, screenshot tool (Win+Shift+S), etc.
 function onVisibilityChange() {
   if (sessionMode !== 'student') return;
   if (document.hidden) {
-    // Blur the page immediately
     document.body.classList.add('student-blur');
   } else {
-    // Briefly keep blur, then remove
     setTimeout(() => {
       document.body.classList.remove('student-blur');
     }, 800);
   }
 }
 
-// Method 4: CSS-level screenshot deterrent — overlay that appears in screenshots
-// We inject a fixed element with -webkit-user-select:none and a watermark
 (function injectWatermark() {
   const wm = document.createElement('div');
   wm.id = 'wm-overlay';
@@ -2758,11 +2700,9 @@ function onVisibilityChange() {
     mix-blend-mode: overlay;
     display: none;
   `;
-  // Will be shown only in student mode after gate pass
   document.body.appendChild(wm);
 })();
 
-// Method 5: CSS media print block
 const printStyle = document.createElement('style');
 printStyle.textContent = `
   @media print {
@@ -2783,19 +2723,16 @@ printStyle.textContent = `
 `;
 document.head.appendChild(printStyle);
 
-// Method 6: Rapid white-flash on keyup of PrintScreen
 document.addEventListener('keyup', (e) => {
   if (sessionMode !== 'student') return;
   if (e.key === 'PrintScreen') {
     triggerSSBlock();
-    // Force the clipboard to be overwritten (where browser supports)
     try {
       navigator.clipboard.writeText('🚫 Screenshot blocked by Reaction Atlas security.');
     } catch(_) {}
   }
 });
 
-// Method 7: Screen Capture API — block getDisplayMedia
 (function overrideScreenCapture() {
   if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
     const orig = navigator.mediaDevices.getDisplayMedia.bind(navigator.mediaDevices);
@@ -2809,7 +2746,6 @@ document.addEventListener('keyup', (e) => {
   }
 })();
 
-// ── Show screenshot block overlay briefly ──
 let ssBlockTimeout = null;
 function triggerSSBlock() {
   if (sessionMode !== 'student') return;
@@ -2819,7 +2755,6 @@ function triggerSSBlock() {
   ssBlockTimeout = setTimeout(() => el.classList.remove('active'), 2000);
 }
 
-// ── Selection & copy prevention in student mode ──
 document.addEventListener('copy', (e) => {
   if (sessionMode !== 'student') return;
   e.preventDefault();
@@ -2827,21 +2762,15 @@ document.addEventListener('copy', (e) => {
 
 document.addEventListener('selectstart', (e) => {
   if (sessionMode !== 'student') return;
-  // Allow selection for reading, just prevent copy
 });
 
-// ─── Drag prevention (drag-to-share) ───
 document.addEventListener('dragstart', (e) => {
   if (sessionMode !== 'student') return;
   e.preventDefault();
 });
 
-// ═══════════════════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════════════════
 render();
 updateSidebar();
-// Initial timer canvas render (empty ring)
 setTimeout(updateTimerDisplay, 100);
 </script>
 </body>
