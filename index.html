@@ -2,297 +2,223 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>JEE Advanced — Organic Reaction Atlas</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0c14;
-    --surface: #111420;
-    --surface2: #181d2e;
-    --border: rgba(255,255,255,0.07);
-    --text: #e8eaf6;
-    --muted: #7b82a0;
-    --accent: #7c6af7;
-    --accent2: #f7c56a;
-    --green: #4ecb8d;
-    --red: #f7706a;
-    --blue: #6ab8f7;
-    --pink: #f76ab8;
-    --orange: #f7a06a;
-    --teal: #6af7e8;
-    --col-alcohol: #4ecb8d;
-    --col-alkane: #6ab8f7;
-    --col-alkene: #f7c56a;
-    --col-alkyne: #f7a06a;
-    --col-alkyl: #f76ab8;
-    --col-aryl: #c46af7;
-    --col-arene: #6af7e8;
+    --bg: #0a0c14; --surface: #111420; --surface2: #181d2e;
+    --border: rgba(255,255,255,0.07); --text: #e8eaf6; --muted: #7b82a0;
+    --accent: #7c6af7; --accent2: #f7c56a; --green: #4ecb8d;
+    --red: #f7706a; --blue: #6ab8f7; --pink: #f76ab8; --orange: #f7a06a;
+    --col-alcohol:#4ecb8d; --col-alkane:#6ab8f7; --col-alkene:#f7c56a;
+    --col-alkyne:#f7a06a; --col-alkyl:#f76ab8; --col-aryl:#c46af7;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-    /* Mobile: prevent callout and selection globally in student mode */
-    -webkit-touch-callout: none;
-  }
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 800px 600px at 10% 20%, rgba(124,106,247,0.06) 0%, transparent 70%),
-      radial-gradient(ellipse 600px 400px at 90% 80%, rgba(78,203,141,0.05) 0%, transparent 70%),
-      radial-gradient(ellipse 400px 300px at 60% 10%, rgba(247,197,106,0.04) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 0;
-  }
-  header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(10,12,20,0.92);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 2rem;
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    height: 64px;
-  }
-  .logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 900; color: var(--text); letter-spacing: -0.02em; white-space: nowrap; flex-shrink: 0; }
-  .logo span { color: var(--accent); }
-  .search-wrap { flex: 1; max-width: 380px; position: relative; }
-  .search-wrap input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px 8px 36px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; outline: none; transition: border-color 0.2s; }
-  .search-wrap input:focus { border-color: var(--accent); }
-  .search-wrap input::placeholder { color: var(--muted); }
-  .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 0.9rem; }
-  #search-results { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; max-height: 320px; overflow-y: auto; z-index: 200; display: none; }
-  #search-results.active { display: block; }
-  .sr-item { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border); transition: background 0.15s; }
-  .sr-item:hover { background: rgba(124,106,247,0.12); }
-  .sr-item:last-child { border-bottom: none; }
-  .sr-name { font-size: 0.82rem; font-weight: 600; color: var(--text); }
-  .sr-sub { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
-  .app { display: flex; height: calc(100vh - 64px); position: relative; z-index: 1; }
-  .sidebar { width: 260px; flex-shrink: 0; border-right: 1px solid var(--border); overflow-y: auto; background: rgba(17,20,32,0.8); padding: 1.2rem 0; }
-  .sidebar::-webkit-scrollbar { width: 4px; }
-  .sidebar::-webkit-scrollbar-track { background: transparent; }
-  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-  .sidebar-section { margin-bottom: 0.4rem; }
-  .sidebar-cat { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding: 0.8rem 1.4rem 0.4rem; }
-  .sidebar-item { display: flex; align-items: center; gap: 0.7rem; padding: 0.55rem 1.4rem; cursor: pointer; transition: all 0.15s; border-left: 2px solid transparent; font-size: 0.85rem; color: var(--muted); }
-  .sidebar-item:hover { background: rgba(255,255,255,0.03); color: var(--text); }
-  .sidebar-item.active { color: var(--text); background: rgba(124,106,247,0.08); }
-  .sidebar-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .sidebar-sub { padding: 0.4rem 1.4rem 0.4rem 3.2rem; font-size: 0.78rem; cursor: pointer; color: var(--muted); transition: all 0.15s; border-left: 2px solid transparent; }
-  .sidebar-sub:hover { color: var(--text); }
-  .sidebar-sub.active { color: var(--text); font-weight: 500; }
-  .main { flex: 1; overflow-y: auto; padding: 2rem 2.5rem; }
-  .main::-webkit-scrollbar { width: 6px; }
-  .main::-webkit-scrollbar-track { background: transparent; }
-  .main::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
-  .page-hero { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
-  .page-hero h1 { font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 900; line-height: 1.1; margin-bottom: 0.5rem; letter-spacing: -0.03em; }
-  .page-hero p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
-  .page-hero .formula { font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: var(--accent2); display: inline-block; margin-top: 0.4rem; }
-  .class-tabs { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
-  .class-tab { padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border); font-size: 0.8rem; cursor: pointer; transition: all 0.2s; color: var(--muted); }
-  .class-tab:hover { border-color: var(--accent); color: var(--text); }
-  .class-tab.active { background: var(--accent); color: white; border-color: var(--accent); }
-  .mind-map { display: flex; flex-direction: column; gap: 1rem; }
-  .rxn-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; }
-  .rxn-card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
-  .rxn-card-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.4rem; cursor: pointer; border-bottom: 1px solid transparent; transition: border-color 0.2s; gap: 1rem; }
-  .rxn-card-header:hover { border-bottom-color: var(--border); }
-  .rxn-card.expanded .rxn-card-header { border-bottom-color: var(--border); }
-  .rxn-left { display: flex; align-items: center; gap: 0.9rem; flex: 1; min-width: 0; }
-  .rxn-num { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; flex-shrink: 0; font-family: 'JetBrains Mono', monospace; }
-  .rxn-reagent-row { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
-  .rxn-reagent { font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .rxn-conditions { font-size: 0.72rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
-  .rxn-arrow { color: var(--muted); font-size: 1.2rem; flex-shrink: 0; }
-  .rxn-product-preview { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 600; flex-shrink: 0; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; }
-  .rxn-expand-btn { width: 26px; height: 26px; border-radius: 6px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0; font-size: 0.75rem; color: var(--muted); }
-  .rxn-expand-btn:hover { background: rgba(124,106,247,0.15); border-color: var(--accent); color: var(--accent); }
-  .rxn-card.expanded .rxn-expand-btn { background: rgba(124,106,247,0.15); border-color: var(--accent); color: var(--accent); }
-  .rxn-body { display: none; padding: 1.2rem 1.4rem; gap: 1rem; flex-direction: column; }
-  .rxn-card.expanded .rxn-body { display: flex; }
-  .rxn-full { display: flex; align-items: center; gap: 1rem; background: rgba(255,255,255,0.02); border-radius: 10px; padding: 1rem 1.2rem; border: 1px solid var(--border); flex-wrap: wrap; gap: 0.7rem; }
-  .rxn-box { background: var(--surface2); border-radius: 8px; padding: 0.6rem 1rem; border: 1px solid var(--border); text-align: center; }
-  .rxn-box .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px; }
-  .rxn-box .val { font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; font-weight: 600; color: var(--text); white-space: pre-wrap; line-height: 1.5; }
-  .rxn-divider { font-size: 1.4rem; color: var(--muted); flex-shrink: 0; }
-  .over-arrow { display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0; }
-  .over-arrow .cond-text { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--accent2); white-space: nowrap; text-align: center; }
-  .over-arrow .arrow-line { font-size: 1.4rem; color: var(--muted); }
-  .rxn-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-  .tag { font-size: 0.68rem; padding: 3px 9px; border-radius: 20px; font-weight: 600; letter-spacing: 0.03em; }
-  .tag-jee { background: rgba(247,197,106,0.15); color: var(--accent2); border: 1px solid rgba(247,197,106,0.3); }
-  .tag-type { background: rgba(124,106,247,0.12); color: var(--accent); border: 1px solid rgba(124,106,247,0.25); }
-  .tag-imp { background: rgba(247,112,106,0.12); color: var(--red); border: 1px solid rgba(247,112,106,0.25); }
-  .tag-green { background: rgba(78,203,141,0.12); color: var(--green); border: 1px solid rgba(78,203,141,0.25); }
-  .mech-toggle { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.78rem; color: var(--accent); font-weight: 500; user-select: none; width: fit-content; }
-  .mech-toggle svg { transition: transform 0.2s; }
-  .mech-toggle.open svg { transform: rotate(180deg); }
-  .mech-body { display: none; background: rgba(124,106,247,0.04); border: 1px solid rgba(124,106,247,0.15); border-radius: 10px; padding: 1rem 1.2rem; }
-  .mech-body.open { display: block; }
-  .mech-step { display: flex; gap: 0.8rem; margin-bottom: 0.7rem; align-items: flex-start; }
-  .mech-step:last-child { margin-bottom: 0; }
-  .mech-step-num { width: 20px; height: 20px; border-radius: 50%; background: rgba(124,106,247,0.2); border: 1px solid rgba(124,106,247,0.4); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
-  .mech-step-text { font-size: 0.8rem; line-height: 1.6; color: var(--text); }
-  .mech-step-text em { font-family: 'JetBrains Mono', monospace; font-style: normal; color: var(--accent2); font-size: 0.78rem; }
-  .mech-note { margin-top: 0.6rem; font-size: 0.75rem; color: var(--muted); font-style: italic; line-height: 1.5; padding-top: 0.6rem; border-top: 1px solid rgba(255,255,255,0.05); }
-  .section-head { margin: 1.5rem 0 0.8rem; display: flex; align-items: center; gap: 0.7rem; }
-  .section-head h2 { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; }
-  .section-head .pill { font-size: 0.68rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
-  .section-line { flex: 1; height: 1px; background: var(--border); }
-  .home-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
-  .home-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.4rem; cursor: pointer; transition: all 0.25s; position: relative; overflow: hidden; }
-  .home-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--card-color, var(--accent)) 0%, transparent 60%); opacity: 0.04; transition: opacity 0.25s; }
-  .home-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.35); border-color: var(--card-color, var(--accent)); }
-  .home-card:hover::before { opacity: 0.1; }
-  .home-card-icon { font-size: 2rem; margin-bottom: 0.8rem; }
-  .home-card h3 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem; color: var(--text); }
-  .home-card p { font-size: 0.77rem; color: var(--muted); line-height: 1.5; }
-  .home-card .rxn-count { font-size: 0.7rem; color: var(--card-color, var(--accent)); font-weight: 600; margin-top: 0.7rem; font-family: 'JetBrains Mono', monospace; }
-  .breadcrumb { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--muted); margin-bottom: 1.2rem; }
-  .breadcrumb span { cursor: pointer; transition: color 0.15s; }
-  .breadcrumb span:hover { color: var(--text); }
-  .breadcrumb .sep { color: rgba(255,255,255,0.2); }
-  .breadcrumb .current { color: var(--text); font-weight: 500; }
-  .empty { padding: 3rem; text-align: center; color: var(--muted); font-size: 0.9rem; }
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
-  .badge { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; border-radius: 6px; font-size: 0.65rem; font-weight: 700; padding: 0 5px; font-family: 'JetBrains Mono', monospace; }
-  @media (max-width: 768px) {
-    .sidebar { display: none; }
-    .main { padding: 1rem; }
-    .page-hero h1 { font-size: 1.6rem; }
-    .rxn-product-preview { display: none; }
-  }
-  #gate { position: fixed; inset: 0; z-index: 9999; background: #07080f; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0; }
-  #gate.hidden { display: none; }
-  .gate-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 700px 500px at 50% 40%, rgba(124,106,247,0.08) 0%, transparent 70%), radial-gradient(ellipse 400px 300px at 20% 80%, rgba(78,203,141,0.05) 0%, transparent 60%); pointer-events: none; }
-  .gate-box { position: relative; background: #0f1120; border: 1px solid rgba(124,106,247,0.25); border-radius: 20px; padding: 2.8rem 2.4rem 2.4rem; width: 360px; max-width: 92vw; box-shadow: 0 0 60px rgba(124,106,247,0.1), 0 24px 64px rgba(0,0,0,0.6); display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
-  .gate-icon { width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, rgba(124,106,247,0.25), rgba(78,203,141,0.15)); border: 1px solid rgba(124,106,247,0.3); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin-bottom: 0.2rem; }
-  .gate-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; letter-spacing: -0.02em; color: var(--text); text-align: center; }
-  .gate-sub { font-size: 0.8rem; color: var(--muted); text-align: center; line-height: 1.5; margin-top: -0.4rem; }
-  .gate-input-wrap { width: 100%; position: relative; }
-  .gate-input { width: 100%; background: #181d2e; border: 1.5px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 13px 44px 13px 16px; color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 1rem; letter-spacing: 0.08em; outline: none; transition: border-color 0.2s, box-shadow 0.2s; text-align: center; }
-  .gate-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(124,106,247,0.15); }
-  .gate-input.error { border-color: var(--red); box-shadow: 0 0 0 3px rgba(247,112,106,0.15); animation: shake 0.4s ease; }
-  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)} }
-  .gate-eye { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--muted); font-size: 1rem; user-select: none; transition: color 0.15s; }
-  .gate-eye:hover { color: var(--text); }
-  .gate-btn { width: 100%; padding: 13px; border-radius: 10px; background: linear-gradient(135deg, #7c6af7, #9f6af7); border: none; color: white; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s, transform 0.1s; letter-spacing: 0.02em; }
-  .gate-btn:hover { opacity: 0.88; }
-  .gate-btn:active { transform: scale(0.98); }
-  .gate-err { font-size: 0.78rem; color: var(--red); text-align: center; min-height: 18px; font-weight: 500; }
-  .gate-hint { font-size: 0.7rem; color: rgba(123,130,160,0.5); text-align: center; margin-top: -0.4rem; font-family: 'JetBrains Mono', monospace; }
-  #timer-wrap { display: none; align-items: center; gap: 0.6rem; margin-left: auto; flex-shrink: 0; }
-  #timer-wrap.visible { display: flex; }
-  .timer-label { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
-  #timer-display { font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 700; color: var(--green); letter-spacing: 0.06em; min-width: 52px; text-align: right; transition: color 0.3s; }
-  #timer-display.warning { color: var(--accent2); }
-  #timer-display.danger  { color: var(--red); }
-  .timer-ring-wrap { position: relative; width: 32px; height: 32px; flex-shrink: 0; }
-  #timer-ring-bg, #timer-ring { position: absolute; inset: 0; border-radius: 50%; border: 3px solid transparent; }
-  #timer-ring-bg { border-color: rgba(255,255,255,0.07); }
-  #timer-ring { border-color: var(--green) transparent transparent transparent; transition: transform 0.5s linear, border-color 0.3s; transform-origin: center; }
-  #ss-block { display: none; position: fixed; inset: 0; z-index: 99998; background: #07080f; align-items: center; justify-content: center; flex-direction: column; gap: 1rem; }
-  #ss-block.active { display: flex; }
-  .ss-icon { font-size: 3rem; }
-  .ss-msg { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--red); }
-  .ss-sub { font-size: 0.8rem; color: var(--muted); }
-  #expired-overlay { display: none; position: fixed; inset: 0; z-index: 9998; background: rgba(7,8,15,0.97); align-items: center; justify-content: center; flex-direction: column; gap: 1.2rem; backdrop-filter: blur(8px); }
-  #expired-overlay.active { display: flex; }
-  .exp-icon { font-size: 3.5rem; }
-  .exp-title { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; color: var(--red); letter-spacing: -0.02em; }
-  .exp-sub { font-size: 0.9rem; color: var(--muted); text-align: center; line-height: 1.6; }
-  .exp-btn { margin-top: 0.5rem; padding: 12px 32px; border-radius: 10px; background: linear-gradient(135deg, #7c6af7, #9f6af7); border: none; color: white; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
-  .exp-btn:hover { opacity: 0.85; }
-  body.session-expired .app, body.session-expired header { filter: blur(10px) brightness(0.3); pointer-events: none; user-select: none; }
-  body.student-blur .app, body.student-blur header { filter: blur(16px) brightness(0.2); pointer-events: none; user-select: none; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-touch-callout:none}
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 800px 600px at 10% 20%,rgba(124,106,247,.06) 0%,transparent 70%),radial-gradient(ellipse 600px 400px at 90% 80%,rgba(78,203,141,.05) 0%,transparent 70%),radial-gradient(ellipse 400px 300px at 60% 10%,rgba(247,197,106,.04) 0%,transparent 60%);pointer-events:none;z-index:0}
 
-  /* ── ULTRA PROTECTION CSS ── */
-  body.sp, body.sp * {
-    -webkit-user-select: none !important;
-    user-select: none !important;
-    -webkit-touch-callout: none !important;
-    -webkit-tap-highlight-color: transparent !important;
+  /* ── PROACTIVE PROTECTION ──
+     Always-on CSS filter in student mode so any frame the OS grabs
+     is already degraded. Invisible to human eye at 0.97/0.96 levels. */
+  #content-wrapper{position:relative;z-index:1;transition:filter .1s}
+  body.sp #content-wrapper{filter:contrast(.97) saturate(.96)}
+  body.sp.shield-active #content-wrapper{filter:blur(22px) brightness(.08) saturate(0)!important;pointer-events:none;user-select:none}
+
+  header{position:sticky;top:0;z-index:100;background:rgba(10,12,20,.93);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;gap:1.2rem;height:64px}
+  .logo{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:var(--text);letter-spacing:-.02em;white-space:nowrap;flex-shrink:0}
+  .logo span{color:var(--accent)}
+  .search-wrap{flex:1;max-width:380px;position:relative}
+  .search-wrap input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px 8px 36px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;transition:border-color .2s}
+  .search-wrap input:focus{border-color:var(--accent)}
+  .search-wrap input::placeholder{color:var(--muted)}
+  .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.9rem;pointer-events:none}
+  #search-results{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface2);border:1px solid var(--border);border-radius:10px;max-height:320px;overflow-y:auto;z-index:200;display:none}
+  #search-results.active{display:block}
+  .sr-item{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s}
+  .sr-item:hover{background:rgba(124,106,247,.12)}
+  .sr-item:last-child{border-bottom:none}
+  .sr-name{font-size:.82rem;font-weight:600;color:var(--text)}
+  .sr-sub{font-size:.72rem;color:var(--muted);margin-top:2px}
+
+  /* Hamburger */
+  .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;flex-shrink:0;background:none;border:none}
+  .hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .25s}
+  .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .hamburger.open span:nth-child(2){opacity:0}
+  .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  @media(max-width:768px){.hamburger{display:flex}}
+
+  .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:199;backdrop-filter:blur(2px)}
+  .sidebar-overlay.open{display:block}
+
+  .app{display:flex;height:calc(100vh - 64px);position:relative;z-index:1}
+  .sidebar{width:260px;flex-shrink:0;border-right:1px solid var(--border);overflow-y:auto;background:rgba(17,20,32,.96);padding:1.2rem 0;z-index:200}
+  .sidebar::-webkit-scrollbar{width:4px}
+  .sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:4px}
+  @media(max-width:768px){
+    .sidebar{position:fixed;top:64px;left:0;bottom:0;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);box-shadow:4px 0 24px rgba(0,0,0,.4)}
+    .sidebar.mobile-open{transform:translateX(0)}
   }
-  /* Allow typing in inputs even in student mode */
-  body.sp input, body.sp textarea {
-    -webkit-user-select: text !important;
-    user-select: text !important;
+
+  .sidebar-section{margin-bottom:.4rem}
+  .sidebar-cat{font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:.8rem 1.4rem .4rem}
+  .sidebar-item{display:flex;align-items:center;gap:.7rem;padding:.55rem 1.4rem;cursor:pointer;transition:all .15s;border-left:2px solid transparent;font-size:.85rem;color:var(--muted)}
+  .sidebar-item:hover{background:rgba(255,255,255,.03);color:var(--text)}
+  .sidebar-item.active{color:var(--text);background:rgba(124,106,247,.08);border-left-color:var(--accent)}
+  .sidebar-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .sidebar-sub{padding:.4rem 1.4rem .4rem 3.2rem;font-size:.78rem;cursor:pointer;color:var(--muted);transition:all .15s;border-left:2px solid transparent}
+  .sidebar-sub:hover{color:var(--text)}
+  .sidebar-sub.active{color:var(--text);font-weight:500;border-left-color:var(--accent)}
+
+  .main{flex:1;overflow-y:auto;padding:2rem 2.5rem}
+  @media(max-width:768px){.main{padding:1rem}}
+
+  .page-hero{margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+  .page-hero h1{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;line-height:1.1;margin-bottom:.5rem;letter-spacing:-.03em}
+  @media(max-width:768px){.page-hero h1{font-size:1.6rem}}
+  .page-hero p{color:var(--muted);font-size:.9rem;line-height:1.6}
+  .page-hero .formula{font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--accent2);display:inline-block;margin-top:.4rem}
+  .class-tabs{display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap}
+  .class-tab{padding:6px 16px;border-radius:20px;border:1px solid var(--border);font-size:.8rem;cursor:pointer;transition:all .2s;color:var(--muted)}
+  .class-tab:hover{border-color:var(--accent);color:var(--text)}
+  .class-tab.active{background:var(--accent);color:white;border-color:var(--accent)}
+
+  .mind-map{display:flex;flex-direction:column;gap:1rem}
+  .rxn-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s}
+  .rxn-card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+  .rxn-card-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.4rem;cursor:pointer;border-bottom:1px solid transparent;transition:border-color .2s;gap:1rem}
+  .rxn-card-header:hover{border-bottom-color:var(--border)}
+  .rxn-card.expanded .rxn-card-header{border-bottom-color:var(--border)}
+  .rxn-left{display:flex;align-items:center;gap:.9rem;flex:1;min-width:0}
+  .rxn-num{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;font-family:'JetBrains Mono',monospace}
+  .rxn-reagent-row{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+  .rxn-reagent{font-family:'JetBrains Mono',monospace;font-size:.88rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rxn-conditions{font-size:.72rem;color:var(--muted);font-family:'JetBrains Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rxn-arrow{color:var(--muted);font-size:1.2rem;flex-shrink:0}
+  .rxn-product-preview{font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:600;flex-shrink:0;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right}
+  @media(max-width:600px){.rxn-product-preview{display:none}}
+  .rxn-expand-btn{width:26px;height:26px;border-radius:6px;background:rgba(255,255,255,.04);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;color:var(--muted)}
+  .rxn-expand-btn svg{transition:transform .2s}
+  .rxn-card.expanded .rxn-expand-btn{background:rgba(124,106,247,.15);border-color:var(--accent);color:var(--accent)}
+  .rxn-card.expanded .rxn-expand-btn svg{transform:rotate(180deg)}
+  .rxn-body{display:none;padding:1.2rem 1.4rem;gap:1rem;flex-direction:column}
+  .rxn-card.expanded .rxn-body{display:flex}
+  .rxn-full{display:flex;align-items:center;gap:.7rem;background:rgba(255,255,255,.02);border-radius:10px;padding:1rem 1.2rem;border:1px solid var(--border);flex-wrap:wrap}
+  .rxn-box{background:var(--surface2);border-radius:8px;padding:.6rem 1rem;border:1px solid var(--border);text-align:center;min-width:100px}
+  .rxn-box .label{font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px}
+  .rxn-box .val{font-family:'JetBrains Mono',monospace;font-size:.88rem;font-weight:600;color:var(--text);white-space:pre-wrap;line-height:1.5}
+  .over-arrow{display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0}
+  .over-arrow .cond-text{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--accent2);white-space:nowrap;text-align:center}
+  .over-arrow .arrow-line{font-size:1.4rem;color:var(--muted)}
+  .rxn-tags{display:flex;gap:.4rem;flex-wrap:wrap}
+  .tag{font-size:.68rem;padding:3px 9px;border-radius:20px;font-weight:600;letter-spacing:.03em}
+  .tag-jee{background:rgba(247,197,106,.15);color:var(--accent2);border:1px solid rgba(247,197,106,.3)}
+  .tag-type{background:rgba(124,106,247,.12);color:var(--accent);border:1px solid rgba(124,106,247,.25)}
+  .tag-imp{background:rgba(247,112,106,.12);color:var(--red);border:1px solid rgba(247,112,106,.25)}
+  .tag-green{background:rgba(78,203,141,.12);color:var(--green);border:1px solid rgba(78,203,141,.25)}
+  .mech-toggle{display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:.78rem;color:var(--accent);font-weight:500;user-select:none;width:fit-content}
+  .mech-toggle svg{transition:transform .2s}
+  .mech-toggle.open svg{transform:rotate(180deg)}
+  .mech-body{display:none;background:rgba(124,106,247,.04);border:1px solid rgba(124,106,247,.15);border-radius:10px;padding:1rem 1.2rem}
+  .mech-body.open{display:block}
+  .mech-step{display:flex;gap:.8rem;margin-bottom:.7rem;align-items:flex-start}
+  .mech-step:last-child{margin-bottom:0}
+  .mech-step-num{width:20px;height:20px;border-radius:50%;background:rgba(124,106,247,.2);border:1px solid rgba(124,106,247,.4);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:var(--accent);flex-shrink:0;margin-top:1px}
+  .mech-step-text{font-size:.8rem;line-height:1.6;color:var(--text)}
+  .mech-note{margin-top:.6rem;font-size:.75rem;color:var(--muted);font-style:italic;line-height:1.5;padding-top:.6rem;border-top:1px solid rgba(255,255,255,.05)}
+  .section-head{margin:1.5rem 0 .8rem;display:flex;align-items:center;gap:.7rem}
+  .section-head h2{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700}
+  .section-head .pill{font-size:.68rem;padding:3px 10px;border-radius:20px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+  .section-line{flex:1;height:1px;background:var(--border)}
+  .home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin-top:1.5rem}
+  .home-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.4rem;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+  .home-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--card-color,var(--accent)) 0%,transparent 60%);opacity:.04;transition:opacity .25s}
+  .home-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.35);border-color:var(--card-color,var(--accent))}
+  .home-card:hover::before{opacity:.1}
+  .home-card-icon{font-size:2rem;margin-bottom:.8rem}
+  .home-card h3{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:.3rem;color:var(--text)}
+  .home-card p{font-size:.77rem;color:var(--muted);line-height:1.5}
+  .home-card .rxn-count{font-size:.7rem;font-weight:600;margin-top:.7rem;font-family:'JetBrains Mono',monospace}
+  .breadcrumb{display:flex;align-items:center;gap:.4rem;font-size:.78rem;color:var(--muted);margin-bottom:1.2rem;flex-wrap:wrap}
+  .breadcrumb span{cursor:pointer;transition:color .15s}
+  .breadcrumb span:hover{color:var(--text)}
+  .breadcrumb .sep{color:rgba(255,255,255,.2);cursor:default}
+  .breadcrumb .current{color:var(--text);font-weight:500;cursor:default}
+  .empty{padding:3rem;text-align:center;color:var(--muted);font-size:.9rem}
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:4px}
+
+  /* ── GATE ── */
+  #gate{position:fixed;inset:0;z-index:9999;background:#07080f;display:flex;align-items:center;justify-content:center;flex-direction:column}
+  #gate.hidden{display:none}
+  .gate-glow{position:absolute;inset:0;background:radial-gradient(ellipse 700px 500px at 50% 40%,rgba(124,106,247,.08) 0%,transparent 70%),radial-gradient(ellipse 400px 300px at 20% 80%,rgba(78,203,141,.05) 0%,transparent 60%);pointer-events:none}
+  .gate-box{position:relative;background:#0f1120;border:1px solid rgba(124,106,247,.25);border-radius:20px;padding:2.8rem 2.4rem 2.4rem;width:360px;max-width:92vw;box-shadow:0 0 60px rgba(124,106,247,.1),0 24px 64px rgba(0,0,0,.6);display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+  .gate-icon{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,rgba(124,106,247,.25),rgba(78,203,141,.15));border:1px solid rgba(124,106,247,.3);display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:.2rem}
+  .gate-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;letter-spacing:-.02em;color:var(--text);text-align:center}
+  .gate-sub{font-size:.8rem;color:var(--muted);text-align:center;line-height:1.5;margin-top:-.4rem}
+  .gate-input-wrap{width:100%;position:relative}
+  .gate-input{width:100%;background:#181d2e;border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:13px 44px 13px 16px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:1rem;letter-spacing:.08em;outline:none;transition:border-color .2s,box-shadow .2s;text-align:center;-webkit-user-select:text!important;user-select:text!important}
+  .gate-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,106,247,.15)}
+  .gate-input.error{border-color:var(--red);box-shadow:0 0 0 3px rgba(247,112,106,.15);animation:shake .4s ease}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+  .gate-eye{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--muted);font-size:1rem;user-select:none;transition:color .15s}
+  .gate-eye:hover{color:var(--text)}
+  .gate-btn{width:100%;padding:13px;border-radius:10px;background:linear-gradient(135deg,#7c6af7,#9f6af7);border:none;color:white;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:.02em}
+  .gate-btn:hover{opacity:.88}
+  .gate-btn:active{transform:scale(.98)}
+  .gate-err{font-size:.78rem;color:var(--red);text-align:center;min-height:18px;font-weight:500}
+  .gate-hint{font-size:.7rem;color:rgba(123,130,160,.5);text-align:center;margin-top:-.4rem;font-family:'JetBrains Mono',monospace}
+
+  /* ── TIMER ── */
+  #timer-wrap{display:none;align-items:center;gap:.6rem;margin-left:auto;flex-shrink:0}
+  #timer-wrap.visible{display:flex}
+  .timer-label{font-size:.7rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+  #timer-display{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--green);letter-spacing:.06em;min-width:52px;text-align:right;transition:color .3s}
+  #timer-display.warning{color:var(--accent2)}
+  #timer-display.danger{color:var(--red)}
+
+  /* ── ULTRA SHIELD ── zero-latency full blackout */
+  #ultra-shield{
+    position:fixed;inset:0;z-index:2147483647;
+    background:#07080f;
+    display:none;   /* toggled to flex synchronously — no animation */
+    align-items:center;justify-content:center;flex-direction:column;gap:16px;
+    color:#fff;font-family:'DM Sans',sans-serif;
   }
-  body.sp img {
-    pointer-events: none !important;
-    -webkit-user-drag: none !important;
+  #ultra-shield.active{display:flex!important}
+  #ultra-shield *{pointer-events:none}
+
+  /* ── EXPIRED ── */
+  #expired-overlay{display:none;position:fixed;inset:0;z-index:9998;background:rgba(7,8,15,.97);align-items:center;justify-content:center;flex-direction:column;gap:1.2rem;backdrop-filter:blur(8px)}
+  #expired-overlay.active{display:flex}
+  .exp-icon{font-size:3.5rem}
+  .exp-title{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--red);letter-spacing:-.02em}
+  .exp-sub{font-size:.9rem;color:var(--muted);text-align:center;line-height:1.6}
+  .exp-btn{margin-top:.5rem;padding:12px 32px;border-radius:10px;background:linear-gradient(135deg,#7c6af7,#9f6af7);border:none;color:white;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:opacity .2s}
+  .exp-btn:hover{opacity:.85}
+
+  /* ── PROTECTION ── */
+  body.sp,body.sp *:not(input):not(textarea):not(.gate-input){
+    -webkit-user-select:none!important;user-select:none!important;
+    -webkit-touch-callout:none!important;-webkit-tap-highlight-color:transparent!important;
   }
-  /* Ultra shield overlay */
-  #ultra-shield {
-    position: fixed;
-    inset: 0;
-    z-index: 2147483647;
-    background: #07080f;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 16px;
-    color: #fff;
-    font-family: 'DM Sans', sans-serif;
-    -webkit-user-select: none;
-    user-select: none;
-    touch-action: none;
-    -webkit-touch-callout: none;
-  }
-  #ultra-shield.active { display: flex !important; }
-  #ultra-shield * { pointer-events: none; }
-  /* Watermark layer */
-  #_swm {
-    position: fixed;
-    inset: 0;
-    z-index: 9000;
-    pointer-events: none;
-    opacity: 0.045;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(5, 1fr);
-    -webkit-user-select: none;
-    user-select: none;
-  }
-  @media print {
-    body { visibility: hidden !important; }
-    body::after {
-      visibility: visible !important;
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      color: red;
-      background: white;
-      content: "Printing is not permitted in student mode.";
-      z-index: 999999;
-    }
-  }
+  body.sp input,body.sp textarea,body.sp .gate-input{-webkit-user-select:text!important;user-select:text!important}
+  body.sp img{pointer-events:none!important;-webkit-user-drag:none!important}
+
+  /* ── WATERMARK ── */
+  #_swm{position:fixed;inset:0;z-index:9000;pointer-events:none;opacity:.042;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(5,1fr);-webkit-user-select:none;user-select:none}
+
+  @media print{body *{visibility:hidden!important}body::after{visibility:visible!important;position:fixed;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:red;background:white;content:"Printing is not permitted in student mode.";z-index:999999}}
 </style>
 </head>
 <body>
 
-<!-- Ultra shield: the full-screen blackout overlay -->
+<!-- Zero-latency shield: in DOM from first paint, activated synchronously -->
 <div id="ultra-shield">
   <div style="font-size:3rem;line-height:1">🚫</div>
-  <div style="font-size:1rem;font-weight:700;letter-spacing:.06em;color:#f7706a;font-family:'DM Sans',sans-serif">PROTECTED CONTENT</div>
-  <div style="font-size:.72rem;color:rgba(255,255,255,.4);text-align:center;max-width:240px;line-height:1.6;font-family:'DM Sans',sans-serif">Screenshots are not permitted in student mode.</div>
+  <div style="font-size:1rem;font-weight:700;letter-spacing:.06em;color:#f7706a">PROTECTED CONTENT</div>
+  <div style="font-size:.72rem;color:rgba(255,255,255,.4);text-align:center;max-width:240px;line-height:1.6">Screenshots are not permitted in student mode.</div>
 </div>
 
 <div id="gate">
@@ -302,613 +228,565 @@
     <div class="gate-title">Reaction Atlas</div>
     <div class="gate-sub">Enter your access code to continue.<br>Session lasts <strong style="color:var(--accent)">30 minutes</strong>.</div>
     <div class="gate-input-wrap">
-      <input class="gate-input" id="gateInput" type="password" placeholder="Enter passcode" autocomplete="off" maxlength="32" onkeydown="if(event.key==='Enter')gateSubmit()">
-      <span class="gate-eye" id="gateEye" onclick="toggleGateEye()">👁</span>
+      <input class="gate-input" id="gateInput" type="password" placeholder="Enter passcode" autocomplete="off" maxlength="32">
+      <span class="gate-eye" id="gateEye">👁</span>
     </div>
     <div class="gate-err" id="gateErr"></div>
-    <button class="gate-btn" onclick="gateSubmit()">Unlock →</button>
+    <button class="gate-btn" id="gateBtn">Unlock →</button>
     <div class="gate-hint">JEE Advanced · Organic Chemistry</div>
   </div>
-</div>
-
-<div id="ss-block">
-  <div class="ss-icon">🚫</div>
-  <div class="ss-msg">Screenshot Blocked</div>
-  <div class="ss-sub">Screenshots are not permitted in student mode.</div>
 </div>
 
 <div id="expired-overlay">
   <div class="exp-icon">⏰</div>
   <div class="exp-title">Session Expired</div>
   <div class="exp-sub">Your 30-minute study session has ended.<br>Please enter your passcode again to continue.</div>
-  <button class="exp-btn" onclick="showGate()">Re-enter Passcode</button>
+  <button class="exp-btn" id="expBtn">Re-enter Passcode</button>
 </div>
 
-<header>
-  <div class="logo">Reaction<span>Atlas</span></div>
-  <div class="search-wrap">
-    <span class="search-icon">⌕</span>
-    <input type="text" id="searchInput" placeholder="Search reagent, product, reaction..." autocomplete="off">
-    <div id="search-results"></div>
-  </div>
-  <div id="timer-wrap">
-    <div class="timer-label">Session</div>
-    <div id="timer-display">30:00</div>
-    <div class="timer-ring-wrap">
-      <div id="timer-ring-bg"></div>
-      <canvas id="timer-canvas" width="32" height="32" style="position:absolute;inset:0;"></canvas>
-    </div>
-  </div>
-</header>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<div class="app">
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-section">
-      <div class="sidebar-cat">Navigation</div>
-      <div class="sidebar-item" data-page="home" onclick="nav('home')"><span>🏠</span> Home</div>
+<div id="content-wrapper">
+  <header>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="logo">Reaction<span>Atlas</span></div>
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="searchInput" placeholder="Search reagent, product, reaction..." autocomplete="off">
+      <div id="search-results"></div>
     </div>
-    <div class="sidebar-section">
-      <div class="sidebar-cat">Alcohols</div>
-      <div class="sidebar-item" data-page="alcohol" onclick="nav('alcohol')"><span class="sidebar-dot" style="background:var(--col-alcohol)"></span> Alcohols</div>
-      <div class="sidebar-sub" data-page="alcohol" data-class="primary" onclick="nav('alcohol','primary')">1° Primary</div>
-      <div class="sidebar-sub" data-page="alcohol" data-class="secondary" onclick="nav('alcohol','secondary')">2° Secondary</div>
-      <div class="sidebar-sub" data-page="alcohol" data-class="tertiary" onclick="nav('alcohol','tertiary')">3° Tertiary</div>
+    <div id="timer-wrap">
+      <div class="timer-label">Session</div>
+      <div id="timer-display">30:00</div>
+      <div style="position:relative;width:32px;height:32px;flex-shrink:0">
+        <canvas id="timer-canvas" width="32" height="32" style="position:absolute;inset:0"></canvas>
+      </div>
     </div>
-    <div class="sidebar-section">
-      <div class="sidebar-cat">Hydrocarbons</div>
-      <div class="sidebar-item" data-page="alkane" onclick="nav('alkane')"><span class="sidebar-dot" style="background:var(--col-alkane)"></span> Alkanes</div>
-      <div class="sidebar-item" data-page="alkene" onclick="nav('alkene')"><span class="sidebar-dot" style="background:var(--col-alkene)"></span> Alkenes</div>
-      <div class="sidebar-item" data-page="alkyne" onclick="nav('alkyne')"><span class="sidebar-dot" style="background:var(--col-alkyne)"></span> Alkynes</div>
-    </div>
-    <div class="sidebar-section">
-      <div class="sidebar-cat">Halides</div>
-      <div class="sidebar-item" data-page="alkyl-halide" onclick="nav('alkyl-halide')"><span class="sidebar-dot" style="background:var(--col-alkyl)"></span> Alkyl Halides</div>
-      <div class="sidebar-sub" data-page="alkyl-halide" data-class="SN1" onclick="nav('alkyl-halide','SN1')">SN1 Reactions</div>
-      <div class="sidebar-sub" data-page="alkyl-halide" data-class="SN2" onclick="nav('alkyl-halide','SN2')">SN2 Reactions</div>
-      <div class="sidebar-sub" data-page="alkyl-halide" data-class="E2" onclick="nav('alkyl-halide','E2')">E1/E2 Reactions</div>
-      <div class="sidebar-sub" data-page="alkyl-halide" data-class="organometal" onclick="nav('alkyl-halide','organometal')">Organometallics</div>
-      <div class="sidebar-item" data-page="aryl-halide" onclick="nav('aryl-halide')"><span class="sidebar-dot" style="background:var(--col-aryl)"></span> Aryl Halides</div>
-    </div>
-  </nav>
-  <main class="main" id="main"></main>
+  </header>
+
+  <div class="app">
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-cat">Navigation</div>
+        <div class="sidebar-item" data-nav="home"><span>🏠</span> Home</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-cat">Alcohols</div>
+        <div class="sidebar-item" data-nav="alcohol"><span class="sidebar-dot" style="background:var(--col-alcohol)"></span> Alcohols</div>
+        <div class="sidebar-sub" data-nav="alcohol" data-class="primary">1° Primary</div>
+        <div class="sidebar-sub" data-nav="alcohol" data-class="secondary">2° Secondary</div>
+        <div class="sidebar-sub" data-nav="alcohol" data-class="tertiary">3° Tertiary</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-cat">Hydrocarbons</div>
+        <div class="sidebar-item" data-nav="alkane"><span class="sidebar-dot" style="background:var(--col-alkane)"></span> Alkanes</div>
+        <div class="sidebar-item" data-nav="alkene"><span class="sidebar-dot" style="background:var(--col-alkene)"></span> Alkenes</div>
+        <div class="sidebar-item" data-nav="alkyne"><span class="sidebar-dot" style="background:var(--col-alkyne)"></span> Alkynes</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-cat">Halides</div>
+        <div class="sidebar-item" data-nav="alkyl-halide"><span class="sidebar-dot" style="background:var(--col-alkyl)"></span> Alkyl Halides</div>
+        <div class="sidebar-sub" data-nav="alkyl-halide" data-class="SN1">SN1 Reactions</div>
+        <div class="sidebar-sub" data-nav="alkyl-halide" data-class="SN2">SN2 Reactions</div>
+        <div class="sidebar-sub" data-nav="alkyl-halide" data-class="E2">E1/E2 Reactions</div>
+        <div class="sidebar-sub" data-nav="alkyl-halide" data-class="organometal">Organometallics</div>
+        <div class="sidebar-item" data-nav="aryl-halide"><span class="sidebar-dot" style="background:var(--col-aryl)"></span> Aryl Halides</div>
+      </div>
+    </nav>
+    <main class="main" id="main"></main>
+  </div>
 </div>
 
 <script>
+'use strict';
+
+// ════════════════════════════════════════════════════════
+// REACTION DATA
+// ════════════════════════════════════════════════════════
 const REACTIONS = {
-  alcohol: {
-    label: 'Alcohols', formula: 'R-OH', color: '#4ecb8d',
-    description: 'Organic compounds with hydroxyl groups. Reactions vary significantly by degree (1°, 2°, 3°).',
-    classes: ['primary', 'secondary', 'tertiary'],
-    data: {
-      primary: [
-        { id: 'alc-p1', section: 'Oxidation', reagent: 'KMnO₄ / K₂Cr₂O₇ (acidic)', conditions: 'H₂SO₄, excess oxidant', product: 'Carboxylic Acid (RCOOH)', type: 'Oxidation', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'Alcohol forms a chromate ester with Cr(VI) species.' }, { step: 'E2-like β-elimination gives aldehyde intermediate (RCHO).' }, { step: 'Further oxidation of aldehyde hydrate → carboxylic acid.' }], note: 'With mild oxidants (PCC/PDC in CH₂Cl₂), primary alcohol stops at aldehyde.' },
-        { id: 'alc-p2', section: 'Oxidation', reagent: 'PCC / PDC', conditions: 'CH₂Cl₂, anhydrous', product: 'Aldehyde (RCHO)', type: 'Oxidation', tags: ['JEE Adv', 'Selective'], mechanism: [{ step: 'Pyridinium chlorochromate (PCC) is a mild Cr(VI) oxidant.' }, { step: 'Forms chromate ester, undergoes β-elimination.' }, { step: 'Anhydrous conditions prevent further oxidation to acid.' }], note: 'PDC (pyridinium dichromate) is milder; used for acid-sensitive substrates.' },
-        { id: 'alc-p3', section: 'Substitution', reagent: 'HX (HBr or HI)', conditions: 'Heat, conc. acid', product: 'Alkyl Halide (RX)', type: 'SN2', tags: ['JEE Adv'], mechanism: [{ step: 'Protonation of –OH by HX → R–OH₂⁺ (good leaving group).' }, { step: 'SN2 attack by X⁻ with inversion at carbon (primary: purely SN2).' }], note: 'Reactivity order: HI > HBr > HCl. Primary ROH reacts by SN2.' },
-        { id: 'alc-p4', section: 'Substitution', reagent: 'SOCl₂', conditions: 'Pyridine (base)', product: 'Alkyl Chloride (RCl) + SO₂ + HCl', type: 'Substitution', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'ROH attacks S of SOCl₂ → chlorosulfite ester + HCl.' }, { step: 'Pyridine neutralises HCl, preventing reversibility.' }, { step: 'Chloride ion attacks with retention (SNi) or inversion (SN2) depending on conditions.' }], note: 'In pyridine: SN2 → inversion. Without base, SNi → retention of configuration.' },
-        { id: 'alc-p5', section: 'Substitution', reagent: 'PBr₃', conditions: 'Anhydrous, 0°C', product: 'Alkyl Bromide (RBr)', type: 'SN2', tags: ['JEE Adv'], mechanism: [{ step: 'ROH attacks P of PBr₃; HBr released.' }, { step: 'Br⁻ performs SN2 on phosphite ester → RBr with inversion.' }], note: '1 equiv PBr₃ converts 3 –OH groups: P(OR)₃ → 3 RBr + H₃PO₃' },
-        { id: 'alc-p6', section: 'Dehydration', reagent: 'Conc. H₂SO₄', conditions: '170°C (excess), or Al₂O₃/Δ', product: 'Alkene (elimination)', type: 'E2', tags: ['JEE Adv', 'Saytzeff'], mechanism: [{ step: 'Protonation of OH → H₂O⁺ leaving group.' }, { step: 'E2 (or E1 for 3°): β-H removed, alkene forms via Saytzeff rule.' }], note: 'At 140°C (equimolar H₂SO₄): intermolecular dehydration → ether (Williamson-like).' },
-        { id: 'alc-p7', section: 'Esterification', reagent: 'RCOOH / RCOCl / (RCO)₂O', conditions: 'H⁺ catalyst or base', product: 'Ester (RCOOR\')', type: 'Esterification', tags: ['JEE Adv', 'Fischer'], mechanism: [{ step: 'Fischer: Protonation of carboxylic acid → nucleophilic attack by ROH.' }, { step: 'Tetrahedral intermediate loses water → ester.' }, { step: 'With acid chloride/anhydride: faster, no proton catalyst needed.' }], note: 'Reversible with acid/base. Equilibrium shifted by excess alcohol or removing water.' },
-        { id: 'alc-p8', section: 'Reaction with Na', reagent: 'Na metal', conditions: 'Room temperature', product: 'Sodium alkoxide (RONa) + H₂↑', type: 'Acid-Base', tags: ['JEE Adv'], mechanism: [{ step: 'Na reduces the O-H bond; electron transfer to H → H₂ gas.' }, { step: 'Sodium alkoxide formed; acidity: H₂O > ROH > C₂H₅OH.' }], note: 'Reactivity: primary > secondary > tertiary (steric effect).' },
-        { id: 'alc-p9', section: 'Iodoform Test', reagent: 'I₂ / NaOH', conditions: 'Warm', product: 'Iodoform (CHI₃) — only if CH₃CH(OH)–', type: 'Halogenation', tags: ['JEE Adv', 'Test'], mechanism: [{ step: 'NaOH oxidises CH₃CH(OH)– to CH₃C(=O)–.' }, { step: 'Three α-H atoms replaced by I (haloform reaction).' }, { step: 'NaOH cleaves C–CI₃ bond → CHI₃ (yellow ppt) + RCOONa.' }], note: 'Positive for: ethanol and all CH₃CH(OH)R compounds. Negative for methanol.' },
-        { id: 'alc-p10', section: 'Oxidative Cleavage', reagent: 'HIO₄ (Periodic acid)', conditions: 'Aqueous, for 1,2-diols', product: 'Two carbonyl fragments (RCHO or RCOR\')', type: 'Oxidative Cleavage', tags: ['JEE Adv', 'Vicinal Diol'], mechanism: [{ step: 'Cyclic ester forms between HIO₄ and 1,2-diol.' }, { step: 'Cyclic ester decomposes → two carbonyl compounds + HIO₃.' }], note: 'Product: primary –OH → HCHO; secondary –OH → RCHO; tertiary –OH → RCOR′.' }
-      ],
-      secondary: [
-        { id: 'alc-s1', section: 'Oxidation', reagent: 'KMnO₄ / K₂Cr₂O₇ (acidic)', conditions: 'H₂SO₄', product: 'Ketone (RCOR\')', type: 'Oxidation', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'Chromate ester forms at the C–OH carbon.' }, { step: 'β-Elimination (no β-H on other side) → ketone directly.' }, { step: 'Ketones resist further oxidation (no α-H on carbonyl C).' }], note: 'Unlike 1° alcohol, 2° stops at ketone because there\'s no H on the carbonyl C.' },
-        { id: 'alc-s2', section: 'Substitution', reagent: 'HX', conditions: 'Heat', product: 'Secondary Alkyl Halide', type: 'SN1/SN2', tags: ['JEE Adv'], mechanism: [{ step: 'Protonation → 2° carbocation (SN1 possible).' }, { step: 'SN2 also occurs; competition depends on solvent and concentration.' }], note: 'Rearrangement possible via hydride shift if adjacent 3° C is present.' },
-        { id: 'alc-s3', section: 'Dehydration', reagent: 'Conc. H₂SO₄ or H₃PO₄', conditions: '130-170°C', product: 'Alkene (Saytzeff product major)', type: 'E1', tags: ['JEE Adv', 'Saytzeff'], mechanism: [{ step: 'Protonation of OH → 2° carbocation via E1.' }, { step: 'Loss of β-H (from more substituted side) → Saytzeff alkene.' }], note: 'Zaitsev product = more substituted alkene (more stable). Watch for rearrangement!' },
-        { id: 'alc-s4', section: 'Iodoform Test', reagent: 'I₂ / NaOH', conditions: 'Warm', product: 'CHI₃ (if CH₃CHOH– present)', type: 'Halogenation', tags: ['JEE Adv', 'Test'], mechanism: [{ step: 'Only CH₃–CH(OH)–R gives positive iodoform (methyl ketone precursor).' }, { step: 'Other secondary alcohols give negative iodoform test.' }], note: 'Isopropanol (CH₃CHOHCH₃) is the classic secondary alcohol giving CHI₃.' },
-        { id: 'alc-s5', section: 'Oppenauer Oxidation', reagent: 'Al(OPr-i)₃ / Acetone', conditions: 'Heat', product: 'Ketone (transfer hydrogenation)', type: 'Oxidation', tags: ['JEE Adv'], mechanism: [{ step: 'Aluminum alkoxide of alcohol + acetone form a 6-membered cyclic intermediate.' }, { step: 'Hydride transfers from alcohol to acetone → ketone + isopropanol.' }], note: 'Reverse of Meerwein-Ponndorf-Verley (MPV) reduction. Used to oxidise sensitive alcohols.' },
-        { id: 'alc-s6', section: 'Lucas Test', reagent: 'Lucas reagent (ZnCl₂/conc. HCl)', conditions: 'Room temp', product: 'Turbidity / cloudiness (alkyl chloride immiscible)', type: 'Test', tags: ['JEE Adv', 'Differentiation'], mechanism: [{ step: 'ZnCl₂ activates OH, Cl⁻ attacks.' }, { step: '3° → immediate turbidity; 2° → turbidity in 5 min; 1° → no turbidity at RT.' }], note: 'Used to distinguish 1°, 2°, 3° alcohols. 3° fastest (SN1 carbocation).' }
-      ],
-      tertiary: [
-        { id: 'alc-t1', section: 'Oxidation', reagent: 'KMnO₄ / K₂Cr₂O₇', conditions: 'Strong acidic, reflux', product: 'C–C bond cleavage → ketones + CO₂', type: 'Oxidation (Cleavage)', tags: ['JEE Adv'], mechanism: [{ step: '3° alcohols have no α-H on carbonyl carbon, so normal oxidation fails.' }, { step: 'Harsh conditions cause C–C bond cleavage → smaller ketone/acid fragments.' }], note: 'Tertiary alcohols are resistant to mild oxidation (PCC does nothing).' },
-        { id: 'alc-t2', section: 'Dehydration', reagent: 'Conc. H₂SO₄ or even dil. HCl/heat', conditions: 'Very mild – 60-85°C', product: 'Alkene (fastest among 1°, 2°, 3°)', type: 'E1', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'OH protonated → 3° carbocation formed (most stable).' }, { step: 'Loss of β-H → most substituted alkene (Saytzeff).' }], note: 'Ease of dehydration: 3° > 2° > 1°. 3° requires lowest temperature.' },
-        { id: 'alc-t3', section: 'Substitution', reagent: 'HX', conditions: 'Room temperature (fast)', product: 'Tertiary Alkyl Halide (SN1)', type: 'SN1', tags: ['JEE Adv'], mechanism: [{ step: 'Protonation of OH → 3° oxonium ion.' }, { step: 'Water leaves → stable 3° carbocation.' }, { step: 'X⁻ attacks cation → tertiary alkyl halide (racemic if chiral).' }], note: 'Lucas test: immediate turbidity with ZnCl₂/HCl at room temp.' },
-        { id: 'alc-t4', section: 'Pinacol Rearrangement', reagent: 'Conc. H₂SO₄ or H₃O⁺', conditions: 'Heat (1,2-diol required)', product: 'Pinacolone (methyl tert-butyl ketone)', type: 'Rearrangement', tags: ['JEE Adv', '★ Classic'], mechanism: [{ step: 'One –OH protonated → leaves as water → 3° carbocation on vicinal carbon.' }, { step: 'Methyl migrates (1,2-shift) → more stable oxocarbenium ion.' }, { step: 'Deprotonation → ketone (pinacolone).' }], note: 'Driving force: aryl/methyl migration preference. The 1,2-shift is the hallmark.' },
-        { id: 'alc-t5', section: 'Wagner-Meerwein', reagent: 'Acid conditions (H₂SO₄)', conditions: 'Can occur during dehydration', product: 'Rearranged alkene or alkyl halide', type: 'Rearrangement', tags: ['JEE Adv', '★ Classic'], mechanism: [{ step: '3° carbocation forms after protonation of OH.' }, { step: 'Adjacent H or alkyl group migrates (1,2-shift) → more stable cation.' }, { step: 'β-H loss or nucleophile capture gives rearranged product.' }], note: 'Look for ring expansion (cyclopentyl → cyclohexyl) and methyl shifts in JEE problems.' }
-      ]
-    }
-  },
-  alkane: {
-    label: 'Alkanes', formula: 'CₙH₂ₙ₊₂', color: '#6ab8f7',
-    description: 'Saturated hydrocarbons. Undergo free-radical reactions predominantly.',
-    classes: null,
-    data: {
-      all: [
-        { id: 'alk-1', section: 'Halogenation', reagent: 'Cl₂ or Br₂', conditions: 'hν (UV light) or Δ; gas phase', product: 'Alkyl Halide (RX)', type: 'Free Radical', tags: ['JEE Adv', 'Must Know', 'Free Radical'], mechanism: [{ step: 'Initiation: X₂ → 2X• (homolytic cleavage by hν).' }, { step: 'Propagation: X• + R–H → R• + HX.' }, { step: 'Propagation: R• + X₂ → R–X + X•.' }, { step: 'Termination: R• + X• → RX; X• + X• → X₂; R• + R• → R–R.' }], note: 'Selectivity: Br₂ highly selective (3°>2°>1°); Cl₂ less selective. Relative rates for bromination: 3° : 2° : 1° ≈ 1640 : 82 : 1' },
-        { id: 'alk-2', section: 'Halogenation Selectivity', reagent: 'Cl₂ vs Br₂', conditions: 'Free radical conditions', product: 'Relative reactivity of H sites', type: 'Selectivity', tags: ['JEE Adv', '★ Classic'], mechanism: [{ step: 'Cl• is reactive → less selective; Br• is stable → highly selective.' }, { step: 'Cl₂: 3°:2°:1° ≈ 5:4:1 at 25°C.' }, { step: 'Br₂: 3°:2°:1° ≈ 1640:82:1.' }], note: 'Hammond postulate: exothermic H-abstraction by Cl• → early TS → less selectivity.' },
-        { id: 'alk-3', section: 'Combustion', reagent: 'O₂ (excess)', conditions: 'Spark / high temp', product: 'CO₂ + H₂O (complete combustion)', type: 'Combustion', tags: ['JEE Adv'], mechanism: [{ step: 'Free-radical chain process initiated by heat/spark.' }, { step: 'CₙH₂ₙ₊₂ + (3n+1)/2 O₂ → n CO₂ + (n+1) H₂O' }], note: 'Limited O₂ → CO; very limited → C (soot/sooty flame test).' },
-        { id: 'alk-4', section: 'Pyrolysis / Cracking', reagent: 'Heat (500-800°C)', conditions: 'No oxygen; catalyst optional', product: 'Smaller alkanes + alkenes', type: 'Thermal Decomposition', tags: ['JEE Adv'], mechanism: [{ step: 'C–C homolysis → two radicals.' }, { step: 'β-scission of radical → alkene + smaller radical.' }], note: 'Industrial: catalytic cracking with zeolites produces gasoline-range fractions.' },
-        { id: 'alk-5', section: 'Nitration', reagent: 'HNO₃ (conc.)', conditions: '150-475°C, vapour phase', product: 'Nitroalkane (RNO₂)', type: 'Free Radical', tags: ['JEE Adv'], mechanism: [{ step: 'HNO₃ homolyzes at high temp → •NO₂.' }, { step: '•NO₂ abstracts H from alkane → R• + HNO₂.' }, { step: 'R• + •NO₂ → RNO₂.' }], note: 'Vapor-phase nitration gives mixture of products (C–C cleavage also occurs).' },
-        { id: 'alk-6', section: 'Sulfonation', reagent: 'Fuming H₂SO₄ (oleum)', conditions: 'High temp', product: 'Alkylsulfonic acid (RSO₃H)', type: 'Free Radical', tags: ['JEE Adv'], mechanism: [{ step: 'SO₃ is the active radical species.' }, { step: 'H-abstraction → R•; R• + SO₃ → radical addition → RSO₃•.' }, { step: 'RSO₃• + RH → RSO₃H + R•.' }], note: 'Used industrially for detergent synthesis.' },
-        { id: 'alk-7', section: 'Wurtz Reaction', reagent: '2 R–X + 2Na', conditions: 'Dry ether', product: 'R–R (symmetrical alkane)', type: 'Coupling', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'Na inserts into C–X bond → R–Na (organosodum).' }, { step: 'R–Na + R–X → R–R + NaX (SN2 on second alkyl halide).' }], note: 'Only good for symmetrical products. Mixed (R + R\') gives complex mixture. Not used for methane (no alkyl halide).' },
-        { id: 'alk-8', section: 'Kolbe Electrolysis', reagent: 'RCOONa (aq), electrolysis', conditions: 'Platinum anode', product: 'R–R (alkane) + CO₂', type: 'Electrochemical', tags: ['JEE Adv'], mechanism: [{ step: 'Anode: RCOO⁻ → RCOO• + e⁻ (oxidation).' }, { step: 'RCOO• → R• + CO₂.' }, { step: 'R• + R• → R–R.' }], note: 'Cathode: 2H₂O + 2e⁻ → H₂ + 2OH⁻.' },
-        { id: 'alk-9', section: 'Decarboxylation', reagent: 'NaOH (fused) + CaO (soda lime)', conditions: 'Δ, dry distillation', product: 'Alkane (one carbon less)', type: 'Decarboxylation', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'Carboxylate anion formed by alkali fusion.' }, { step: 'Decarboxylation: RCOONa + NaOH → R–H + Na₂CO₃.' }], note: 'Soda lime (NaOH/CaO, 3:1) required. Used to prepare lower alkane from sodium salt of acid.' }
-      ]
-    }
-  },
-  alkene: {
-    label: 'Alkenes', formula: 'CₙH₂ₙ', color: '#f7c56a',
-    description: 'Unsaturated hydrocarbons with C=C double bond. Undergo electrophilic addition primarily.',
-    classes: null,
-    data: {
-      all: [
-        { id: 'ene-1', section: 'Electrophilic Addition', reagent: 'HX (HBr, HCl, HI)', conditions: 'No peroxide', product: 'Alkyl Halide (Markovnikov)', type: 'AdE', tags: ['JEE Adv', 'Must Know', 'Markovnikov'], mechanism: [{ step: 'Electrophilic H⁺ attacks the π bond → more stable carbocation (Markovnikov).' }, { step: 'X⁻ attacks the carbocation → anti addition not required (carbocation open).' }], note: 'Markovnikov: H adds to C with more H. Driving force: more stable 3° > 2° > 1° carbocation.' },
-        { id: 'ene-2', section: 'Electrophilic Addition', reagent: 'HBr + peroxide (ROOR)', conditions: 'Free radical (anti-Markovnikov)', product: 'Alkyl Bromide (anti-Markovnikov)', type: 'Free Radical', tags: ['JEE Adv', 'Must Know', 'Anti-Markovnikov'], mechanism: [{ step: 'Initiation: ROOR → 2RO•; RO• + HBr → Br•.' }, { step: 'Br• adds to less substituted C (steric) → more stable radical on more substituted C.' }, { step: 'More substituted radical + HBr → anti-Markovnikov product.' }], note: 'Only HBr shows anti-Markovnikov with peroxides. HCl and HI do NOT (thermodynamics).' },
-        { id: 'ene-3', section: 'Halogenation', reagent: 'Br₂ / Cl₂', conditions: 'CCl₄ (non-polar), dark', product: 'Vicinal dihalide (anti addition)', type: 'AdE', tags: ['JEE Adv', 'Must Know', 'Anti'], mechanism: [{ step: 'Br₂ approaches from one face → π complex → bridged bromonium ion.' }, { step: 'Br⁻ attacks the other face (anti attack) → anti-addition product.' }], note: 'Br₂/CCl₄ decolorises → test for unsaturation. Anti addition → meso or (±) pair depending on substrate.' },
-        { id: 'ene-4', section: 'Hydroxylation', reagent: 'Cold, dil. KMnO₄ (Baeyer\'s reagent)', conditions: 'Alkaline, 0°C', product: 'Syn-diol (vicinal diol)', type: 'Syn Addition', tags: ['JEE Adv', 'Must Know', 'Baeyer'], mechanism: [{ step: 'MnO₄⁻ forms a cyclic manganate ester across the double bond (syn).' }, { step: 'Hydrolysis of ester → cis-1,2-diol + MnO₂ (brown ppt).' }], note: 'Purple → colourless/brown ppt. Test for unsaturation (Baeyer\'s test).' },
-        { id: 'ene-5', section: 'Hydroxylation', reagent: 'OsO₄', conditions: 'Stoichiometric or catalytic + NMO', product: 'Syn-diol (cis-1,2-diol)', type: 'Syn Addition', tags: ['JEE Adv'], mechanism: [{ step: 'OsO₄ forms an osmate ester with both π-electrons (concerted, syn).' }, { step: 'H₂O₂ or NMO oxidizes Os(VI) back to Os(VIII) catalytically.' }], note: 'Gives exclusively syn (cis) diol. Stereospecific. AD-mix gives asymmetric dihydroxylation.' },
-        { id: 'ene-6', section: 'Hydroxylation (Anti)', reagent: 'Peracid (mCPBA) then H₂O', conditions: 'Two steps', product: 'Anti-diol (trans-1,2-diol)', type: 'Anti Addition', tags: ['JEE Adv', '★ Classic'], mechanism: [{ step: 'mCPBA epoxidises alkene → epoxide (retention of geometry, syn epoxidation).' }, { step: 'Acid/base-catalysed ring opening of epoxide by H₂O → anti-diol (SN2 at epoxide).' }], note: 'Syn epoxidation + anti ring opening → net anti diol. Contrast with KMnO₄/OsO₄ (syn diol).' },
-        { id: 'ene-7', section: 'Ozonolysis', reagent: 'O₃ then (CH₃)₂S or Zn/H₂O', conditions: 'Reductive workup', product: 'Aldehydes/Ketones (cleavage)', type: 'Oxidative Cleavage', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'O₃ adds across C=C in [3+2] → molozonide (unstable).' }, { step: 'Molozonide rearranges → carbonyl oxide + aldehyde/ketone.' }, { step: 'These recombine → stable ozonide.' }, { step: 'Reductive workup: ozonide cleaved → R-CHO / R₂C=O.' }], note: 'R₂C= → ketone; RCH= → aldehyde; CH₂= → HCHO. Oxidative workup (H₂O₂) converts aldehydes to acids.' },
-        { id: 'ene-8', section: 'Oxidation (Hot KMnO₄)', reagent: 'Hot, conc. KMnO₄ (acidic)', conditions: 'Reflux', product: 'Cleavage: R₂C= → ketone; RCH= → acid; CH₂= → CO₂', type: 'Oxidative Cleavage', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'Cleavage of C=C bond.' }, { step: 'Monosubstituted =CH₂ → CO₂ + H₂O.' }, { step: 'Internal RHC= → RCOOH; R₂C= → ketone.' }], note: 'Key JEE tool: work backwards from products to determine alkene structure.' },
-        { id: 'ene-9', section: 'Hydration', reagent: 'H₂O / H₂SO₄', conditions: 'Markovnikov, dilute acid', product: 'Alcohol (Markovnikov)', type: 'AdE', tags: ['JEE Adv'], mechanism: [{ step: 'H⁺ protonates alkene → more stable carbocation (Markovnikov).' }, { step: 'H₂O attacks carbocation → oxonium ion → alcohol.' }], note: 'Anti-Markovnikov hydration via hydroboration-oxidation (BH₃/THF then H₂O₂/NaOH).' },
-        { id: 'ene-10', section: 'Hydroboration-Oxidation', reagent: 'BH₃·THF then H₂O₂/NaOH', conditions: 'Two steps', product: 'Anti-Markovnikov alcohol (syn addition)', type: 'Anti-Markovnikov', tags: ['JEE Adv', 'Must Know', '★ Classic'], mechanism: [{ step: 'BH₃ undergoes syn, concerted, 4-centre addition (B to less hindered C).' }, { step: 'B bonds to less substituted C; H bonds to more substituted C (syn).' }, { step: 'H₂O₂/NaOH oxidises C–B → C–OH with retention of configuration.' }], note: 'Result: anti-Markovnikov + syn addition. No rearrangement. Net: opposite of acid-catalysed hydration.' },
-        { id: 'ene-11', section: 'Epoxidation', reagent: 'Peracid (mCPBA, RCO₃H)', conditions: 'CH₂Cl₂, RT', product: 'Epoxide (oxirane)', type: 'Syn Addition', tags: ['JEE Adv'], mechanism: [{ step: 'Peracid delivers electrophilic O to the π bond from one face (concerted).' }, { step: 'Syn epoxidation → retention of geometry (cis alkene → cis epoxide).' }], note: 'Epoxides are strained; opened by nucleophiles (SN2: inversion → anti product).' },
-        { id: 'ene-12', section: 'Cyclopropanation', reagent: 'CHCl₃ + KOH → :CCl₂; or CH₂I₂ + Zn–Cu (Simmons-Smith)', conditions: 'Strong base for carbene', product: 'Cyclopropane derivative', type: 'Carbene Addition', tags: ['JEE Adv'], mechanism: [{ step: 'Base removes HCl from CHCl₃ → trichloromethyl anion → :CCl₂ (dichlorocarbene).' }, { step: 'Carbene is a singlet electrophile; adds syn to alkene → cyclopropane.' }], note: 'Simmons-Smith: Zn-carbenoid (not free carbene), also syn specific. No rearrangement.' },
-        { id: 'ene-13', section: 'Diels-Alder', reagent: 'Diene + Dienophile (e.g., maleic anhydride)', conditions: 'Heat; endo rule', product: 'Cyclohexene derivative (syn, stereospecific)', type: '[4+2] Cycloaddition', tags: ['JEE Adv', '★ Classic'], mechanism: [{ step: 'Concerted [4+2] cycloaddition: diene (s-cis) reacts with dienophile.' }, { step: 'Suprafacial on both components → syn addition of all new bonds.' }, { step: 'Endo rule: larger groups prefer endo (kinetic product).' }], note: 'Diene must be s-cis. Electron-withdrawing groups on dienophile activate the reaction. Retro-DA also occurs at high T.' },
-        { id: 'ene-14', section: 'Polymerisation', reagent: 'Initiator (free radical / acid / Ziegler-Natta)', conditions: 'High pressure', product: 'Polymer (polyethylene, polypropylene)', type: 'Addition Polymerisation', tags: ['JEE Adv'], mechanism: [{ step: 'Initiation: In• + CH₂=CH₂ → In–CH₂–CH₂•.' }, { step: 'Propagation: chain grows by repeated addition to monomer.' }, { step: 'Termination: coupling or disproportionation of radicals.' }], note: 'Ziegler-Natta (TiCl₄/Al(C₂H₅)₃) gives isotactic polypropylene (stereoregular).' }
-      ]
-    }
-  },
-  alkyne: {
-    label: 'Alkynes', formula: 'CₙH₂ₙ₋₂', color: '#f7a06a',
-    description: 'Unsaturated hydrocarbons with C≡C triple bond. More reactive than alkenes; terminal alkynes are acidic.',
-    classes: null,
-    data: {
-      all: [
-        { id: 'yn-1', section: 'Acidic Nature', reagent: 'NaNH₂ (sodamide) or Na metal', conditions: 'Terminal alkyne only', product: 'Sodium acetylide (RC≡CNa) + H₂/NH₃', type: 'Acid-Base', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'sp C–H bond is more acidic (pKa ~25) vs sp² (~44) vs sp³ (~50).' }, { step: 'NH₂⁻ (conjugate base of NH₃, pKa 38) deprotonates alkyne → alkynide.' }], note: 'Acidity order: RC≡C–H > H₂O > ROH > R₂C=CH₂ > alkane. Acetylide = good nucleophile.' },
-        { id: 'yn-2', section: 'Addition of HX', reagent: 'HX (1 equiv)', conditions: 'One addition', product: 'Vinyl Halide (Markovnikov)', type: 'AdE', tags: ['JEE Adv', 'Markovnikov'], mechanism: [{ step: 'H⁺ adds to one sp C → vinyl cation → X⁻ attacks.' }, { step: 'Markovnikov: H to terminal C (gives more stable vinyl cation on internal C).' }], note: '2 equiv HX → geminal dihalide (both X on same C). Product of 2nd addition also Markovnikov.' },
-        { id: 'yn-3', section: 'Addition of X₂', reagent: 'Br₂ (1 equiv)', conditions: 'CCl₄', product: 'Trans-1,2-dibromo alkene (anti)', type: 'AdE (anti)', tags: ['JEE Adv'], mechanism: [{ step: 'Bromonium ion forms across triple bond.' }, { step: 'Br⁻ attacks anti → trans-vinyl dibromide (E-isomer).' }], note: '2 equiv Br₂ → tetrabromo compound. Decolourises Br₂/CCl₄ → test for unsaturation.' },
-        { id: 'yn-4', section: 'Hydration', reagent: 'H₂O / HgSO₄ / H₂SO₄', conditions: 'Markovnikov (Kucherov)', product: 'Ketone (from internal) or Acetaldehyde (from terminal)', type: 'Hydration', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'Hg²⁺ coordinates to π electrons; H₂O attacks (Markovnikov).' }, { step: 'Vinyl alcohol (enol) intermediate.' }, { step: 'Tautomerisation: enol → ketone (keto form more stable).' }], note: 'CH≡CH + H₂O → CH₃CHO (acetaldehyde). RC≡CH + H₂O → RCOCH₃ (methyl ketone).' },
-        { id: 'yn-5', section: 'Hydroboration-Oxidation', reagent: 'Sia₂BH then H₂O₂/NaOH', conditions: 'Anti-Markovnikov', product: 'Aldehyde (from terminal alkyne)', type: 'Anti-Markovnikov Hydration', tags: ['JEE Adv', '★ Classic'], mechanism: [{ step: 'Hindered borane (Sia₂BH) adds to terminal carbon (anti-Markovnikov).' }, { step: 'Vinyl borane intermediate → oxidised by H₂O₂/NaOH → vinyl alcohol.' }, { step: 'Enol tautomerises to aldehyde.' }], note: 'Alkyne → aldehyde (anti-Markovnikov). Contrast: Hg²⁺ → Markovnikov (ketone from terminal).' },
-        { id: 'yn-6', section: 'Reduction (Lindlar)', reagent: 'H₂ / Lindlar\'s catalyst (Pd/BaSO₄/quinoline)', conditions: 'Partial reduction', product: 'cis-Alkene (syn addition)', type: 'Syn Reduction', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'Lindlar catalyst poisons Pd so it only does one addition of H₂.' }, { step: 'Both H atoms delivered from same face → cis (Z) alkene.' }], note: 'Gives Z-alkene exclusively. Contrast: Na/NH₃(l) → trans (E) alkene.' },
-        { id: 'yn-7', section: 'Reduction (Na–NH₃)', reagent: 'Na or Li / liquid NH₃', conditions: 'Birch-type; dissolving metal', product: 'trans-Alkene (anti addition)', type: 'Anti Reduction', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'Solvated electron (e⁻ from Na) adds to alkyne → radical anion.' }, { step: 'Protonation by NH₃ → vinyl radical (trans more stable → trans vinyl radical).' }, { step: 'Second e⁻ → carbanion; protonation → trans alkene.' }], note: 'Gives E-alkene (trans). Remember: Lindlar→Z, Na/NH₃→E.' },
-        { id: 'yn-8', section: 'Alkynylation (Nucleophilic)', reagent: 'RC≡CNa + R\'X', conditions: 'SN2 on alkyl halide', product: 'R–C≡C–R\' (chain extended)', type: 'Nucleophilic Substitution', tags: ['JEE Adv', '★ Classic'], mechanism: [{ step: 'Sodium acetylide (RC≡C⁻Na⁺) is a strong nucleophile.' }, { step: 'SN2 on primary alkyl halide → new C–C bond formed.' }], note: 'Used to build carbon chains. Only works with 1° R\'X (2° gives elimination).' },
-        { id: 'yn-9', section: 'Ozonolysis', reagent: 'O₃ then H₂O', conditions: 'Oxidative workup', product: 'Two Carboxylic Acids or CO₂', type: 'Oxidative Cleavage', tags: ['JEE Adv'], mechanism: [{ step: 'O₃ adds to triple bond → cleavage of both π bonds.' }, { step: 'Hydrolysis → two carboxylic acid fragments (or CO₂ from terminal).' }], note: 'RC≡CR\' → RCOOH + R\'COOH. Terminal: RC≡CH → RCOOH + CO₂.' },
-        { id: 'yn-10', section: 'Cycloaddition (Reppe)', reagent: 'HC≡CH × 4 (Ni catalyst)', conditions: 'Ni(CO)₄, heat', product: 'Cyclooctatetraene (COT)', type: 'Cyclotetramerisation', tags: ['JEE Adv'], mechanism: [{ step: '4 molecules of acetylene couple via Ni catalyst.' }, { step: 'Produces tub-shaped cyclooctatetraene (non-aromatic, antiaromatic COT).' }], note: 'With [Co] catalyst: HC≡CH × 3 → benzene (cyclotrimerisation, Reppe).' },
-        { id: 'yn-11', section: 'Silver/Copper Acetylide', reagent: 'AgNO₃/NH₃ or Cu₂Cl₂/NH₃', conditions: 'Terminal alkyne only', product: 'Silver acetylide (RC≡CAg) or Cu acetylide — white/red ppt', type: 'Metal Salt Formation', tags: ['JEE Adv', 'Test'], mechanism: [{ step: 'Ag⁺ (from [Ag(NH₃)₂]⁺) replaces terminal alkynyl H → white ppt.' }, { step: 'Cu⁺ (from Cu₂Cl₂/NH₃) → reddish-brown ppt of Cu acetylide.' }], note: 'Used to distinguish terminal from internal alkynes. Explode when dry (care!). Internal alkynes → no precipitate.' }
-      ]
-    }
-  },
-  'alkyl-halide': {
-    label: 'Alkyl Halides', formula: 'R–X', color: '#f76ab8',
-    description: 'Haloalkanes with C–X bond. Central to substitution (SN1, SN2) and elimination (E1, E2) reactions.',
-    classes: ['SN1', 'SN2', 'E2', 'organometal'],
-    data: {
-      SN1: [
-        { id: 'rh-sn1-1', section: 'SN1 Reactions', reagent: 'H₂O / ROH / RCOOH', conditions: 'Polar protic solvent, 3° or allylic/benzylic RX', product: 'Alcohol / Ether / Ester + HX', type: 'SN1', tags: ['JEE Adv', 'Must Know', 'SN1'], mechanism: [{ step: 'Rate-determining step: RX → R⁺ + X⁻ (unimolecular ionisation).' }, { step: 'Carbocation stabilised by hyperconjugation/resonance (3°>2°).' }, { step: 'Nucleophile attacks planar carbocation → racemisation (±50:50).' }], note: 'Rate = k[RX]. Order: 3° > 2° >> 1°. Favoured by polar protic solvents (H₂O, ROH). Rearrangements possible.' },
-        { id: 'rh-sn1-2', section: 'SN1 Reactions', reagent: 'AgNO₃ in ethanol', conditions: '3° > 2° > 1° (rate)', product: 'AgX precipitate + carbocation product', type: 'SN1 Test', tags: ['JEE Adv', 'Test'], mechanism: [{ step: 'Ag⁺ abstracts X⁻ → drives ionisation (SN1).' }, { step: 'AgX precipitates; rate indicates RX type.' }], note: 'AgF>AgCl>AgBr>AgI in solubility (AgF soluble; AgI most insoluble yellow ppt).' },
-        { id: 'rh-sn1-3', section: 'SN1 Reactions', reagent: 'Allylic/Benzylic rearrangement', conditions: 'SN1 conditions', product: 'Allylic shift product (resonance-stabilised cation)', type: 'Rearrangement', tags: ['JEE Adv', '★ Classic'], mechanism: [{ step: 'Allylic/benzylic cation formed → resonance structures.' }, { step: 'Nucleophile attacks either end of the allylic system → mixture of products.' }], note: 'CH₂=CH–CH₂⁺ ↔ ⁺CH₂–CH=CH₂. Attack at both ends → SN1\' product.' },
-        { id: 'rh-sn1-4', section: 'SN1 Reactions', reagent: 'Hydride / Methyl shift', conditions: '3° carbocation forms via SN1', product: 'Rearranged substitution product', type: 'Rearrangement', tags: ['JEE Adv', '★ Classic'], mechanism: [{ step: 'Initial 2° carbocation formed.' }, { step: 'Adjacent H or methyl migrates (1,2-shift) → more stable 3° carbocation.' }, { step: 'Nucleophile attacks rearranged cation.' }], note: 'Neopentyl-type substrates always rearrange under SN1 conditions.' }
-      ],
-      SN2: [
-        { id: 'rh-sn2-1', section: 'SN2 Reactions', reagent: 'NaOH (aq)', conditions: 'Primary RX, polar aprotic or protic', product: 'Alcohol (inversion)', type: 'SN2', tags: ['JEE Adv', 'Must Know', 'SN2'], mechanism: [{ step: 'Rate = k[RX][Nu⁻] — bimolecular, one step.' }, { step: 'Nu attacks anti to leaving group → Walden inversion (backside attack).' }, { step: 'Transition state: trigonal bipyramidal (5-coordinate C).' }], note: 'Order: CH₃X > 1° > 2° >> 3° (steric effect). No rearrangement (concerted).' },
-        { id: 'rh-sn2-2', section: 'SN2 Reactions', reagent: 'NaCN / KCN', conditions: 'Polar aprotic (DMSO/acetone), 1° RX', product: 'Nitrile (RCN) — chain lengthened by 1C', type: 'SN2', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'CN⁻ is ambident nucleophile (C or N end).' }, { step: 'Attacks via C → nitrile (major in polar aprotic).' }, { step: 'Attacks via N → isonitrile (isocyanide, minor or in polar protic).' }], note: 'Nitrile can be hydrolysed → amide → carboxylic acid. Useful for chain extension.' },
-        { id: 'rh-sn2-3', section: 'SN2 Reactions', reagent: 'NaNO₂ / AgNO₂', conditions: 'Ambident Nu', product: 'NaNO₂ → nitroalkane (C-attack); AgNO₂ → alkyl nitrite (O-attack)', type: 'SN2', tags: ['JEE Adv', '★ Classic'], mechanism: [{ step: 'NO₂⁻ is ambident: N-end gives nitroalkane (R–NO₂); O-end gives nitrite ester (R–ONO).' }, { step: 'Hard-hard: Ag+ coordinates O → O-attack (RONO); free Na+ → harder N attack (RNO₂).' }], note: 'HSAB principle explains selectivity. NaNO₂ → RNO₂. AgNO₂ → RONO.' },
-        { id: 'rh-sn2-4', section: 'SN2 Reactions', reagent: 'KI in acetone (Finkelstein)', conditions: 'Polar aprotic, equilibrium shift', product: 'Alkyl Iodide (RI) from RCl or RBr', type: 'SN2 (Halide Exchange)', tags: ['JEE Adv'], mechanism: [{ step: 'I⁻ displaces Cl⁻/Br⁻ via SN2 (KI soluble in acetone; KCl/KBr precipitate).' }, { step: 'Equilibrium driven forward by insolubility of product KX.' }], note: 'Finkelstein: R–Cl + KI → R–I + KCl↓ (acetone). Used to make alkyl iodides.' },
-        { id: 'rh-sn2-5', section: 'SN2 Reactions', reagent: 'NaOR\' (sodium alkoxide)', conditions: 'Williamson ether synthesis', product: 'Ether (ROR\')', type: 'SN2', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'RO⁻ attacks C of R\'X via SN2 → ether + X⁻.' }], note: 'Primary R\'X required. Tertiary gives elimination. Used to make asymmetric ethers.' },
-        { id: 'rh-sn2-6', section: 'SN2 Reactions', reagent: 'NaN₃', conditions: 'SN2', product: 'Alkyl Azide (RN₃) → amine (after reduction)', type: 'SN2', tags: ['JEE Adv'], mechanism: [{ step: 'N₃⁻ attacks RX via SN2 → alkyl azide.' }, { step: 'Reduction (LiAlH₄ or H₂/Pd) → primary amine (RNH₂).' }], note: 'Gabriel–azide route to primary amines without over-alkylation problem.' },
-        { id: 'rh-sn2-7', section: 'SN2 Reactions', reagent: 'Malonic ester / acetoacetic ester', conditions: 'NaOEt, then RX', product: 'α-substituted acid/ketone', type: 'SN2 (Malonic)', tags: ['JEE Adv', '★ Classic'], mechanism: [{ step: 'NaOEt deprotonates active methylene of malonic ester → stabilised enolate.' }, { step: 'Enolate attacks RX (SN2) → alkylation.' }, { step: 'Hydrolysis + decarboxylation → substituted acetic acid.' }], note: 'Double alkylation possible. Malonic ester synthesis = standard route to substituted acetic acids.' }
-      ],
-      E2: [
-        { id: 'rh-e-1', section: 'E2 Elimination', reagent: 'KOH (alc) / NaOEt', conditions: 'Polar aprotic or alcoholic, strong base', product: 'Alkene (Saytzeff major)', type: 'E2', tags: ['JEE Adv', 'Must Know', 'E2'], mechanism: [{ step: 'Rate = k[RX][Base] — bimolecular, concerted.' }, { step: 'Anti-periplanar arrangement of H and X required (dihedral 180°).' }, { step: 'β-H removed by base; C–X breaks; C=C forms simultaneously.' }], note: 'Saytzeff product (more substituted alkene) major. Hofmann with bulky base.' },
-        { id: 'rh-e-2', section: 'E2 Elimination', reagent: 'Bulky base: KO-t-Bu', conditions: 'tert-Butoxide, E2', product: 'Hofmann product (less substituted alkene)', type: 'E2 (Hofmann)', tags: ['JEE Adv'], mechanism: [{ step: 'Bulky base cannot access hindered β-H → goes to less hindered position.' }, { step: 'Less substituted alkene (Hofmann product) forms.' }], note: 'Small base (EtO⁻) → Saytzeff. Bulky base (t-BuO⁻) → Hofmann.' },
-        { id: 'rh-e-3', section: 'E2 Stereospecificity', reagent: 'KOH/EtOH', conditions: 'Anti-periplanar geometry', product: 'Specific alkene geometry (E or Z)', type: 'Stereospecific E2', tags: ['JEE Adv', '★ Classic'], mechanism: [{ step: 'E2 requires anti arrangement of H and X (180° dihedral).' }, { step: 'For meso compound → one alkene geometry; (R,R) or (S,S) → another.' }], note: 'meso-2,3-dibromobutane → meso diastereomer → E-2-butene. (±)pair → Z-2-butene.' },
-        { id: 'rh-e-4', section: 'E1 Elimination', reagent: 'Weak base / polar protic solvent', conditions: 'Tertiary RX, heat', product: 'Alkene (Saytzeff, rearrangement possible)', type: 'E1', tags: ['JEE Adv'], mechanism: [{ step: 'First step: ionisation → carbocation (rate-determining).' }, { step: 'Second step: base removes β-H → alkene.' }], note: 'E1 and SN1 compete (both via carbocation). High temp favours elimination.' },
-        { id: 'rh-e-5', section: 'Dehydrohalogenation (2 moles base)', reagent: '2 moles KOH (alc)', conditions: 'Geminal or vicinal dihalide', product: 'Alkyne', type: 'Double E2', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'First E2: vicinal dihalide → vinyl halide.' }, { step: 'Second E2: vinyl halide (anti-periplanar required, needs strong base) → alkyne.' }], note: 'Geminal or vicinal dihalide + 2 KOH(alc) → alkyne. NaNH₂ used for last step if needed.' }
-      ],
-      organometal: [
-        { id: 'rh-om-1', section: 'Grignard', reagent: 'Mg / dry ether → RMgX', conditions: 'Anhydrous, inert atmosphere', product: 'Grignard reagent (RMgX)', type: 'Organometallic', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'Mg inserts into C–X bond (oxidative addition across Mg surface).' }, { step: 'Polarity reversal: C⁻ (carbanion equivalent) in RMgX.' }], note: 'Extremely moisture-sensitive. Acts as nucleophile (R⁻) and strong base.' },
-        { id: 'rh-om-2', section: 'Grignard + Carbonyl', reagent: 'RMgX + HCHO → 1° OH; RCHO → 2° OH; R\'COR → 3° OH', conditions: 'Dry ether, then H₃O⁺', product: 'Primary/Secondary/Tertiary Alcohol', type: 'Nucleophilic Addition', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'R⁻ (from RMgX) attacks electrophilic carbonyl C.' }, { step: 'Alkoxide formed → protonation by H₃O⁺ gives alcohol.' }], note: 'HCHO → 1°; aldehyde → 2°; ketone → 3°. CO₂ + RMgX → RCOOH after H₃O⁺.' },
-        { id: 'rh-om-3', section: 'Grignard + CO₂', reagent: 'RMgX + CO₂ (dry ice), then H₃O⁺', conditions: 'Anhydrous', product: 'Carboxylic Acid (RCOOH) — one more C', type: 'Carboxylation', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'R⁻ attacks C of CO₂ → carboxylate (RCOOMgX).' }, { step: 'Protonation → RCOOH.' }], note: 'Best method to introduce –COOH. Product has one more carbon than RMgX.' },
-        { id: 'rh-om-4', section: 'Wurtz (modified)', reagent: 'RLi or RMgX + R\'X', conditions: 'Coupling reaction', product: 'R–R\' (cross-coupling)', type: 'Coupling', tags: ['JEE Adv'], mechanism: [{ step: 'Transmetalation or direct SN2 of organometallic on alkyl halide.' }], note: 'Better than Wurtz reaction for unsymmetrical coupling (though Pd-catalysis is more modern).' },
-        { id: 'rh-om-5', section: 'Gilman Reagent (R₂CuLi)', reagent: '2 RLi + CuI → R₂CuLi', conditions: 'Ether, -78°C', product: '1,4-addition (conjugate) to enones / coupling with R\'X', type: 'Conjugate Addition', tags: ['JEE Adv', '★ Classic'], mechanism: [{ step: 'R₂CuLi undergoes 1,4-addition to α,β-unsaturated carbonyl (not 1,2).' }, { step: 'Soft nucleophile (R₂CuLi) → soft electrophile (β-carbon).' }], note: 'Grignard → 1,2 addition (hard); Gilman → 1,4 addition. Coupling with vinyl/aryl halides.' },
-        { id: 'rh-om-6', section: 'Corey-House (Organocopper)', reagent: 'R₂CuLi + R\'X → R–R\'', conditions: 'Primary alkyl, vinyl, aryl halides', product: 'Alkane / Cross-coupling product', type: 'Coupling', tags: ['JEE Adv'], mechanism: [{ step: 'Gilman reagent undergoes SN2-like coupling with R\'X.' }, { step: 'Highly selective; avoids scrambling seen in Wurtz.' }], note: 'Used to make complex alkanes; avoids Wurtz\'s random coupling problem.' }
-      ]
-    }
-  },
-  'aryl-halide': {
-    label: 'Aryl Halides', formula: 'Ar–X', color: '#c46af7',
-    description: 'Halides directly bonded to aromatic ring. Very resistant to SN2; undergo nucleophilic aromatic substitution (SNAr) and benzyne routes.',
-    classes: null,
-    data: {
-      all: [
-        { id: 'arh-1', section: 'EAS on Ring', reagent: 'Cl₂/AlCl₃ or Br₂/FeBr₃', conditions: 'Electrophilic Aromatic Substitution', product: 'Ortho + Para halogenated product', type: 'EAS', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'X group on ring: –I effect (deactivates ring) but +M effect (lone pair donation → o/p director).' }, { step: 'Arenium ion (σ-complex) stabilised at o and p positions.' }], note: 'X is ortho-para director but ring deactivator vs benzene. More o/p than meta product.' },
-        { id: 'arh-2', section: 'Nucleophilic Aromatic Substitution (SNAr)', reagent: 'NaOH (aq), 300°C, 300 atm', conditions: 'EWG must activate ring (e.g. NO₂)', product: 'Phenol (ArOH) from ArX', type: 'SNAr (Addition-Elimination)', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'Nu⁻ (OH⁻) attacks ipso carbon → Meisenheimer complex (rate-determining).' }, { step: 'X⁻ leaves → product.' }, { step: 'EWG (NO₂) at ortho/para stabilises Meisenheimer complex.' }], note: '2,4-dinitrochlorobenzene: SNAr very fast. Without EWG: chlorobenzene requires harsh 300°C. Activated by ortho/para NO₂.' },
-        { id: 'arh-3', section: 'Benzyne Mechanism', reagent: 'NaNH₂ / Sodamide', conditions: 'Strong base, no EWG on ring', product: 'Aniline (mixture of o/p) via benzyne intermediate', type: 'Benzyne (Elimination-Addition)', tags: ['JEE Adv', '★ Classic'], mechanism: [{ step: 'NaNH₂ abstracts ortho H → loss of Cl⁻ → benzyne (strained triple bond).' }, { step: 'NH₃/NH₂⁻ attacks either end of benzyne symmetrically → mixture.' }], note: 'Confirmed by isotope labelling (¹⁴C). Gives ~50:50 ortho and meta product relative to label.' },
-        { id: 'arh-4', section: 'Ullmann Coupling', reagent: '2 ArX + Cu (dust)', conditions: 'Δ, 200°C', product: 'Biaryl (Ar–Ar)', type: 'Coupling', tags: ['JEE Adv'], mechanism: [{ step: 'Cu oxidatively adds to C–X bond → ArCu–X.' }, { step: 'Second ArX reductively eliminates → Ar–Ar.' }], note: 'Older method for biaryl synthesis. Modern: Suzuki, Negishi, Kumada (Pd-catalysed).' },
-        { id: 'arh-5', section: 'Grignard from Aryl Halide', reagent: 'ArX + Mg / dry ether', conditions: 'Anhydrous', product: 'Aryl Grignard (ArMgX)', type: 'Organometallic', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'Mg inserts into Ar–X bond (ArBr and ArI easier; ArCl slower).' }], note: 'ArMgX is an excellent nucleophile; reacts with carbonyls same as alkyl Grignard.' },
-        { id: 'arh-6', section: 'Reduction', reagent: 'Zn/HCl, or H₂/Ni, or LiAlH₄', conditions: 'Vigorous conditions needed', product: 'Arene (Ar–H): replacement of X with H', type: 'Reduction', tags: ['JEE Adv'], mechanism: [{ step: 'Hydrogenolysis: H₂/Raney Ni → Ar–H + HX.' }, { step: 'LiAlH₄ rarely reduces Ar–X (Ar–X bond too strong); usually needs activated ring.' }], note: 'Better via Pd-C/H₂. Birch reduction reduces ring but not C–X usually.' },
-        { id: 'arh-7', section: 'Preparation (from diazonium)', reagent: 'Sandmeyer: Cu₂X₂/HX; or Schiemann (HBF₄) for F', conditions: 'Diazonium salt intermediate', product: 'ArX from ArNH₂', type: 'Diazotisation → Sandmeyer', tags: ['JEE Adv', 'Must Know'], mechanism: [{ step: 'ArNH₂ + NaNO₂/HX (0-5°C) → ArN₂⁺ (diazonium salt).' }, { step: 'Sandmeyer: ArN₂⁺ + Cu₂Cl₂ → ArCl + N₂ + Cu⁺.' }, { step: 'Schiemann (for F): ArN₂⁺ + BF₄⁻ → ArN₂BF₄; dry heat → ArF + BF₃ + N₂.' }], note: 'Only reliable route to aryl fluoride (Schiemann) and aryl iodide (KI/ArN₂⁺ directly).' },
-        { id: 'arh-8', section: 'Oxidative Addition (Palladium)', reagent: 'Pd(0) + ArX → Ar–Pd–X', conditions: 'Part of Suzuki/Heck/Negishi cycle', product: 'Oxidative addition intermediate (Pd(II))', type: 'Cross-Coupling', tags: ['JEE Adv'], mechanism: [{ step: 'Pd(0) inserts into Ar–X bond → Ar–Pd(II)–X.' }, { step: 'Transmetalation with boronic acid (Suzuki) or Zn (Negishi).' }, { step: 'Reductive elimination → Ar–R + Pd(0) regenerated.' }], note: 'ArI > ArBr >> ArCl in reactivity toward Pd(0).' },
-        { id: 'arh-9', section: 'SNAr with NH₃', reagent: 'NH₃ (excess), high temp/pressure', conditions: 'EWG needed ortho/para to X', product: 'Aniline derivative (ArNH₂)', type: 'SNAr', tags: ['JEE Adv'], mechanism: [{ step: 'NH₃ acts as nucleophile → Meisenheimer complex.' }, { step: 'Loss of X⁻ → aniline product.' }], note: 'Example: 2,4-dinitrochlorobenzene + NH₃ → 2,4-dinitroaniline (fast at RT).' },
-        { id: 'arh-10', section: 'Fitting Reaction', reagent: 'ArX + R–X + 2Na', conditions: 'Dry ether', product: 'Ar–R (alkylarene)', type: 'Coupling (Fittig)', tags: ['JEE Adv'], mechanism: [{ step: 'Aryl–Na and R–Na formed; aryl–Na attacks RX → Ar–R.' }], note: 'Fittig: Ar–X + Ar–X + 2Na → Ar–Ar. Wurtz-Fittig: ArX + RX + 2Na → Ar–R.' }
-      ]
-    }
-  }
+  alcohol:{label:'Alcohols',formula:'R-OH',color:'#4ecb8d',description:'Organic compounds with hydroxyl groups. Reactions vary significantly by degree (1°, 2°, 3°).',classes:['primary','secondary','tertiary'],data:{primary:[{id:'alc-p1',section:'Oxidation',reagent:'KMnO₄ / K₂Cr₂O₇ (acidic)',conditions:'H₂SO₄, excess oxidant',product:'Carboxylic Acid (RCOOH)',type:'Oxidation',tags:['JEE Adv','Must Know'],mechanism:[{step:'Alcohol forms a chromate ester with Cr(VI) species.'},{step:'E2-like β-elimination gives aldehyde intermediate (RCHO).'},{step:'Further oxidation of aldehyde hydrate → carboxylic acid.'}],note:'With mild oxidants (PCC/PDC in CH₂Cl₂), primary alcohol stops at aldehyde.'},{id:'alc-p2',section:'Oxidation',reagent:'PCC / PDC',conditions:'CH₂Cl₂, anhydrous',product:'Aldehyde (RCHO)',type:'Oxidation',tags:['JEE Adv','Selective'],mechanism:[{step:'Pyridinium chlorochromate (PCC) is a mild Cr(VI) oxidant.'},{step:'Forms chromate ester, undergoes β-elimination.'},{step:'Anhydrous conditions prevent further oxidation to acid.'}],note:'PDC (pyridinium dichromate) is milder; used for acid-sensitive substrates.'},{id:'alc-p3',section:'Substitution',reagent:'HX (HBr or HI)',conditions:'Heat, conc. acid',product:'Alkyl Halide (RX)',type:'SN2',tags:['JEE Adv'],mechanism:[{step:'Protonation of –OH by HX → R–OH₂⁺ (good leaving group).'},{step:'SN2 attack by X⁻ with inversion at carbon (primary: purely SN2).'}],note:'Reactivity order: HI > HBr > HCl. Primary ROH reacts by SN2.'},{id:'alc-p4',section:'Substitution',reagent:'SOCl₂',conditions:'Pyridine (base)',product:'Alkyl Chloride (RCl) + SO₂ + HCl',type:'Substitution',tags:['JEE Adv','Must Know'],mechanism:[{step:'ROH attacks S of SOCl₂ → chlorosulfite ester + HCl.'},{step:'Pyridine neutralises HCl, preventing reversibility.'},{step:'Chloride ion attacks with retention (SNi) or inversion (SN2) depending on conditions.'}],note:'In pyridine: SN2 → inversion. Without base, SNi → retention of configuration.'},{id:'alc-p5',section:'Substitution',reagent:'PBr₃',conditions:'Anhydrous, 0°C',product:'Alkyl Bromide (RBr)',type:'SN2',tags:['JEE Adv'],mechanism:[{step:'ROH attacks P of PBr₃; HBr released.'},{step:'Br⁻ performs SN2 on phosphite ester → RBr with inversion.'}],note:'1 equiv PBr₃ converts 3 –OH groups: P(OR)₃ → 3 RBr + H₃PO₃'},{id:'alc-p6',section:'Dehydration',reagent:'Conc. H₂SO₄',conditions:'170°C (excess), or Al₂O₃/Δ',product:'Alkene (elimination)',type:'E2',tags:['JEE Adv','Saytzeff'],mechanism:[{step:'Protonation of OH → H₂O⁺ leaving group.'},{step:'E2 (or E1 for 3°): β-H removed, alkene forms via Saytzeff rule.'}],note:'At 140°C (equimolar H₂SO₄): intermolecular dehydration → ether (Williamson-like).'},{id:'alc-p7',section:'Esterification',reagent:'RCOOH / RCOCl / (RCO)₂O',conditions:'H⁺ catalyst or base',product:"Ester (RCOOR')",type:'Esterification',tags:['JEE Adv','Fischer'],mechanism:[{step:'Fischer: Protonation of carboxylic acid → nucleophilic attack by ROH.'},{step:'Tetrahedral intermediate loses water → ester.'},{step:'With acid chloride/anhydride: faster, no proton catalyst needed.'}],note:'Reversible with acid/base. Equilibrium shifted by excess alcohol or removing water.'},{id:'alc-p8',section:'Reaction with Na',reagent:'Na metal',conditions:'Room temperature',product:'Sodium alkoxide (RONa) + H₂↑',type:'Acid-Base',tags:['JEE Adv'],mechanism:[{step:'Na reduces the O-H bond; electron transfer to H → H₂ gas.'},{step:'Sodium alkoxide formed; acidity: H₂O > ROH > C₂H₅OH.'}],note:'Reactivity: primary > secondary > tertiary (steric effect).'},{id:'alc-p9',section:'Iodoform Test',reagent:'I₂ / NaOH',conditions:'Warm',product:'Iodoform (CHI₃) — only if CH₃CH(OH)–',type:'Halogenation',tags:['JEE Adv','Test'],mechanism:[{step:'NaOH oxidises CH₃CH(OH)– to CH₃C(=O)–.'},{step:'Three α-H atoms replaced by I (haloform reaction).'},{step:'NaOH cleaves C–CI₃ bond → CHI₃ (yellow ppt) + RCOONa.'}],note:'Positive for: ethanol and all CH₃CH(OH)R compounds. Negative for methanol.'},{id:'alc-p10',section:'Oxidative Cleavage',reagent:'HIO₄ (Periodic acid)',conditions:'Aqueous, for 1,2-diols',product:"Two carbonyl fragments (RCHO or RCOR')",type:'Oxidative Cleavage',tags:['JEE Adv','Vicinal Diol'],mechanism:[{step:'Cyclic ester forms between HIO₄ and 1,2-diol.'},{step:'Cyclic ester decomposes → two carbonyl compounds + HIO₃.'}],note:'Product: primary –OH → HCHO; secondary –OH → RCHO; tertiary –OH → RCOR\u2032.'}],secondary:[{id:'alc-s1',section:'Oxidation',reagent:'KMnO₄ / K₂Cr₂O₇ (acidic)',conditions:'H₂SO₄',product:"Ketone (RCOR')",type:'Oxidation',tags:['JEE Adv','Must Know'],mechanism:[{step:'Chromate ester forms at the C–OH carbon.'},{step:'β-Elimination (no β-H on other side) → ketone directly.'},{step:'Ketones resist further oxidation (no α-H on carbonyl C).'}],note:"Unlike 1° alcohol, 2° stops at ketone because there's no H on the carbonyl C."},{id:'alc-s2',section:'Substitution',reagent:'HX',conditions:'Heat',product:'Secondary Alkyl Halide',type:'SN1/SN2',tags:['JEE Adv'],mechanism:[{step:'Protonation → 2° carbocation (SN1 possible).'},{step:'SN2 also occurs; competition depends on solvent and concentration.'}],note:'Rearrangement possible via hydride shift if adjacent 3° C is present.'},{id:'alc-s3',section:'Dehydration',reagent:'Conc. H₂SO₄ or H₃PO₄',conditions:'130-170°C',product:'Alkene (Saytzeff product major)',type:'E1',tags:['JEE Adv','Saytzeff'],mechanism:[{step:'Protonation of OH → 2° carbocation via E1.'},{step:'Loss of β-H (from more substituted side) → Saytzeff alkene.'}],note:'Zaitsev product = more substituted alkene (more stable). Watch for rearrangement!'},{id:'alc-s4',section:'Iodoform Test',reagent:'I₂ / NaOH',conditions:'Warm',product:'CHI₃ (if CH₃CHOH– present)',type:'Halogenation',tags:['JEE Adv','Test'],mechanism:[{step:'Only CH₃–CH(OH)–R gives positive iodoform (methyl ketone precursor).'},{step:'Other secondary alcohols give negative iodoform test.'}],note:'Isopropanol (CH₃CHOHCH₃) is the classic secondary alcohol giving CHI₃.'},{id:'alc-s5',section:'Oppenauer Oxidation',reagent:'Al(OPr-i)₃ / Acetone',conditions:'Heat',product:'Ketone (transfer hydrogenation)',type:'Oxidation',tags:['JEE Adv'],mechanism:[{step:'Aluminum alkoxide of alcohol + acetone form a 6-membered cyclic intermediate.'},{step:'Hydride transfers from alcohol to acetone → ketone + isopropanol.'}],note:'Reverse of Meerwein-Ponndorf-Verley (MPV) reduction. Used to oxidise sensitive alcohols.'},{id:'alc-s6',section:'Lucas Test',reagent:'Lucas reagent (ZnCl₂/conc. HCl)',conditions:'Room temp',product:'Turbidity / cloudiness (alkyl chloride immiscible)',type:'Test',tags:['JEE Adv','Differentiation'],mechanism:[{step:'ZnCl₂ activates OH, Cl⁻ attacks.'},{step:'3° → immediate turbidity; 2° → turbidity in 5 min; 1° → no turbidity at RT.'}],note:'Used to distinguish 1°, 2°, 3° alcohols. 3° fastest (SN1 carbocation).'}],tertiary:[{id:'alc-t1',section:'Oxidation',reagent:'KMnO₄ / K₂Cr₂O₇',conditions:'Strong acidic, reflux',product:'C–C bond cleavage → ketones + CO₂',type:'Oxidation (Cleavage)',tags:['JEE Adv'],mechanism:[{step:'3° alcohols have no α-H on carbonyl carbon, so normal oxidation fails.'},{step:'Harsh conditions cause C–C bond cleavage → smaller ketone/acid fragments.'}],note:'Tertiary alcohols are resistant to mild oxidation (PCC does nothing).'},{id:'alc-t2',section:'Dehydration',reagent:'Conc. H₂SO₄ or even dil. HCl/heat',conditions:'Very mild – 60-85°C',product:'Alkene (fastest among 1°, 2°, 3°)',type:'E1',tags:['JEE Adv','Must Know'],mechanism:[{step:'OH protonated → 3° carbocation formed (most stable).'},{step:'Loss of β-H → most substituted alkene (Saytzeff).'}],note:'Ease of dehydration: 3° > 2° > 1°. 3° requires lowest temperature.'},{id:'alc-t3',section:'Substitution',reagent:'HX',conditions:'Room temperature (fast)',product:'Tertiary Alkyl Halide (SN1)',type:'SN1',tags:['JEE Adv'],mechanism:[{step:'Protonation of OH → 3° oxonium ion.'},{step:'Water leaves → stable 3° carbocation.'},{step:'X⁻ attacks cation → tertiary alkyl halide (racemic if chiral).'}],note:'Lucas test: immediate turbidity with ZnCl₂/HCl at room temp.'},{id:'alc-t4',section:'Pinacol Rearrangement',reagent:'Conc. H₂SO₄ or H₃O⁺',conditions:'Heat (1,2-diol required)',product:'Pinacolone (methyl tert-butyl ketone)',type:'Rearrangement',tags:['JEE Adv','★ Classic'],mechanism:[{step:'One –OH protonated → leaves as water → 3° carbocation on vicinal carbon.'},{step:'Methyl migrates (1,2-shift) → more stable oxocarbenium ion.'},{step:'Deprotonation → ketone (pinacolone).'}],note:'Driving force: aryl/methyl migration preference. The 1,2-shift is the hallmark.'},{id:'alc-t5',section:'Wagner-Meerwein',reagent:'Acid conditions (H₂SO₄)',conditions:'Can occur during dehydration',product:'Rearranged alkene or alkyl halide',type:'Rearrangement',tags:['JEE Adv','★ Classic'],mechanism:[{step:'3° carbocation forms after protonation of OH.'},{step:'Adjacent H or alkyl group migrates (1,2-shift) → more stable cation.'},{step:'β-H loss or nucleophile capture gives rearranged product.'}],note:'Look for ring expansion (cyclopentyl → cyclohexyl) and methyl shifts in JEE problems.'}]}},
+  alkane:{label:'Alkanes',formula:'CₙH₂ₙ₊₂',color:'#6ab8f7',description:'Saturated hydrocarbons. Undergo free-radical reactions predominantly.',classes:null,data:{all:[{id:'alk-1',section:'Halogenation',reagent:'Cl₂ or Br₂',conditions:'hν (UV light) or Δ; gas phase',product:'Alkyl Halide (RX)',type:'Free Radical',tags:['JEE Adv','Must Know','Free Radical'],mechanism:[{step:'Initiation: X₂ → 2X• (homolytic cleavage by hν).'},{step:'Propagation: X• + R–H → R• + HX.'},{step:'Propagation: R• + X₂ → R–X + X•.'},{step:'Termination: R• + X• → RX; X• + X• → X₂; R• + R• → R–R.'}],note:'Selectivity: Br₂ highly selective (3°>2°>1°); Cl₂ less selective. Relative rates for bromination: 3° : 2° : 1° ≈ 1640 : 82 : 1'},{id:'alk-2',section:'Halogenation Selectivity',reagent:'Cl₂ vs Br₂',conditions:'Free radical conditions',product:'Relative reactivity of H sites',type:'Selectivity',tags:['JEE Adv','★ Classic'],mechanism:[{step:'Cl• is reactive → less selective; Br• is stable → highly selective.'},{step:'Cl₂: 3°:2°:1° ≈ 5:4:1 at 25°C.'},{step:'Br₂: 3°:2°:1° ≈ 1640:82:1.'}],note:'Hammond postulate: exothermic H-abstraction by Cl• → early TS → less selectivity.'},{id:'alk-3',section:'Combustion',reagent:'O₂ (excess)',conditions:'Spark / high temp',product:'CO₂ + H₂O (complete combustion)',type:'Combustion',tags:['JEE Adv'],mechanism:[{step:'Free-radical chain process initiated by heat/spark.'},{step:'CₙH₂ₙ₊₂ + (3n+1)/2 O₂ → n CO₂ + (n+1) H₂O'}],note:'Limited O₂ → CO; very limited → C (soot/sooty flame test).'},{id:'alk-4',section:'Pyrolysis / Cracking',reagent:'Heat (500-800°C)',conditions:'No oxygen; catalyst optional',product:'Smaller alkanes + alkenes',type:'Thermal Decomposition',tags:['JEE Adv'],mechanism:[{step:'C–C homolysis → two radicals.'},{step:'β-scission of radical → alkene + smaller radical.'}],note:'Industrial: catalytic cracking with zeolites produces gasoline-range fractions.'},{id:'alk-5',section:'Nitration',reagent:'HNO₃ (conc.)',conditions:'150-475°C, vapour phase',product:'Nitroalkane (RNO₂)',type:'Free Radical',tags:['JEE Adv'],mechanism:[{step:'HNO₃ homolyzes at high temp → •NO₂.'},{step:'•NO₂ abstracts H from alkane → R• + HNO₂.'},{step:'R• + •NO₂ → RNO₂.'}],note:'Vapor-phase nitration gives mixture of products (C–C cleavage also occurs).'},{id:'alk-6',section:'Sulfonation',reagent:'Fuming H₂SO₄ (oleum)',conditions:'High temp',product:'Alkylsulfonic acid (RSO₃H)',type:'Free Radical',tags:['JEE Adv'],mechanism:[{step:'SO₃ is the active radical species.'},{step:'H-abstraction → R•; R• + SO₃ → radical addition → RSO₃•.'},{step:'RSO₃• + RH → RSO₃H + R•.'}],note:'Used industrially for detergent synthesis.'},{id:'alk-7',section:'Wurtz Reaction',reagent:'2 R–X + 2Na',conditions:'Dry ether',product:'R–R (symmetrical alkane)',type:'Coupling',tags:['JEE Adv','Must Know'],mechanism:[{step:'Na inserts into C–X bond → R–Na (organosodum).'},{step:"R–Na + R–X → R–R + NaX (SN2 on second alkyl halide)."}],note:"Only good for symmetrical products. Mixed (R + R') gives complex mixture."},{id:'alk-8',section:'Kolbe Electrolysis',reagent:'RCOONa (aq), electrolysis',conditions:'Platinum anode',product:'R–R (alkane) + CO₂',type:'Electrochemical',tags:['JEE Adv'],mechanism:[{step:'Anode: RCOO⁻ → RCOO• + e⁻ (oxidation).'},{step:'RCOO• → R• + CO₂.'},{step:'R• + R• → R–R.'}],note:'Cathode: 2H₂O + 2e⁻ → H₂ + 2OH⁻.'},{id:'alk-9',section:'Decarboxylation',reagent:'NaOH (fused) + CaO (soda lime)',conditions:'Δ, dry distillation',product:'Alkane (one carbon less)',type:'Decarboxylation',tags:['JEE Adv','Must Know'],mechanism:[{step:'Carboxylate anion formed by alkali fusion.'},{step:'Decarboxylation: RCOONa + NaOH → R–H + Na₂CO₃.'}],note:'Soda lime (NaOH/CaO, 3:1) required. Used to prepare lower alkane from sodium salt of acid.'}]}},
+  alkene:{label:'Alkenes',formula:'CₙH₂ₙ',color:'#f7c56a',description:'Unsaturated hydrocarbons with C=C double bond. Undergo electrophilic addition primarily.',classes:null,data:{all:[{id:'ene-1',section:'Electrophilic Addition',reagent:'HX (HBr, HCl, HI)',conditions:'No peroxide',product:'Alkyl Halide (Markovnikov)',type:'AdE',tags:['JEE Adv','Must Know','Markovnikov'],mechanism:[{step:'Electrophilic H⁺ attacks the π bond → more stable carbocation (Markovnikov).'},{step:'X⁻ attacks the carbocation → anti addition not required (carbocation open).'}],note:'Markovnikov: H adds to C with more H. Driving force: more stable 3° > 2° > 1° carbocation.'},{id:'ene-2',section:'Electrophilic Addition',reagent:'HBr + peroxide (ROOR)',conditions:'Free radical (anti-Markovnikov)',product:'Alkyl Bromide (anti-Markovnikov)',type:'Free Radical',tags:['JEE Adv','Must Know','Anti-Markovnikov'],mechanism:[{step:'Initiation: ROOR → 2RO•; RO• + HBr → Br•.'},{step:'Br• adds to less substituted C (steric) → more stable radical on more substituted C.'},{step:'More substituted radical + HBr → anti-Markovnikov product.'}],note:'Only HBr shows anti-Markovnikov with peroxides. HCl and HI do NOT (thermodynamics).'},{id:'ene-3',section:'Halogenation',reagent:'Br₂ / Cl₂',conditions:'CCl₄ (non-polar), dark',product:'Vicinal dihalide (anti addition)',type:'AdE',tags:['JEE Adv','Must Know','Anti'],mechanism:[{step:'Br₂ approaches from one face → π complex → bridged bromonium ion.'},{step:'Br⁻ attacks the other face (anti attack) → anti-addition product.'}],note:'Br₂/CCl₄ decolorises → test for unsaturation. Anti addition → meso or (±) pair depending on substrate.'},{id:'ene-4',section:'Hydroxylation',reagent:"Cold, dil. KMnO₄ (Baeyer's reagent)",conditions:'Alkaline, 0°C',product:'Syn-diol (vicinal diol)',type:'Syn Addition',tags:['JEE Adv','Must Know','Baeyer'],mechanism:[{step:'MnO₄⁻ forms a cyclic manganate ester across the double bond (syn).'},{step:'Hydrolysis of ester → cis-1,2-diol + MnO₂ (brown ppt).'}],note:"Purple → colourless/brown ppt. Test for unsaturation (Baeyer's test)."},{id:'ene-5',section:'Hydroxylation',reagent:'OsO₄',conditions:'Stoichiometric or catalytic + NMO',product:'Syn-diol (cis-1,2-diol)',type:'Syn Addition',tags:['JEE Adv'],mechanism:[{step:'OsO₄ forms an osmate ester with both π-electrons (concerted, syn).'},{step:'H₂O₂ or NMO oxidizes Os(VI) back to Os(VIII) catalytically.'}],note:'Gives exclusively syn (cis) diol. Stereospecific. AD-mix gives asymmetric dihydroxylation.'},{id:'ene-6',section:'Hydroxylation (Anti)',reagent:'Peracid (mCPBA) then H₂O',conditions:'Two steps',product:'Anti-diol (trans-1,2-diol)',type:'Anti Addition',tags:['JEE Adv','★ Classic'],mechanism:[{step:'mCPBA epoxidises alkene → epoxide (retention of geometry, syn epoxidation).'},{step:'Acid/base-catalysed ring opening of epoxide by H₂O → anti-diol (SN2 at epoxide).'}],note:'Syn epoxidation + anti ring opening → net anti diol. Contrast with KMnO₄/OsO₄ (syn diol).'},{id:'ene-7',section:'Ozonolysis',reagent:'O₃ then (CH₃)₂S or Zn/H₂O',conditions:'Reductive workup',product:'Aldehydes/Ketones (cleavage)',type:'Oxidative Cleavage',tags:['JEE Adv','Must Know'],mechanism:[{step:'O₃ adds across C=C in [3+2] → molozonide (unstable).'},{step:'Molozonide rearranges → carbonyl oxide + aldehyde/ketone.'},{step:'These recombine → stable ozonide.'},{step:'Reductive workup: ozonide cleaved → R-CHO / R₂C=O.'}],note:'R₂C= → ketone; RCH= → aldehyde; CH₂= → HCHO. Oxidative workup (H₂O₂) converts aldehydes to acids.'},{id:'ene-8',section:'Oxidation (Hot KMnO₄)',reagent:'Hot, conc. KMnO₄ (acidic)',conditions:'Reflux',product:'Cleavage: R₂C= → ketone; RCH= → acid; CH₂= → CO₂',type:'Oxidative Cleavage',tags:['JEE Adv','Must Know'],mechanism:[{step:'Cleavage of C=C bond.'},{step:'Monosubstituted =CH₂ → CO₂ + H₂O.'},{step:'Internal RHC= → RCOOH; R₂C= → ketone.'}],note:'Key JEE tool: work backwards from products to determine alkene structure.'},{id:'ene-9',section:'Hydration',reagent:'H₂O / H₂SO₄',conditions:'Markovnikov, dilute acid',product:'Alcohol (Markovnikov)',type:'AdE',tags:['JEE Adv'],mechanism:[{step:'H⁺ protonates alkene → more stable carbocation (Markovnikov).'},{step:'H₂O attacks carbocation → oxonium ion → alcohol.'}],note:'Anti-Markovnikov hydration via hydroboration-oxidation (BH₃/THF then H₂O₂/NaOH).'},{id:'ene-10',section:'Hydroboration-Oxidation',reagent:'BH₃·THF then H₂O₂/NaOH',conditions:'Two steps',product:'Anti-Markovnikov alcohol (syn addition)',type:'Anti-Markovnikov',tags:['JEE Adv','Must Know','★ Classic'],mechanism:[{step:'BH₃ undergoes syn, concerted, 4-centre addition (B to less hindered C).'},{step:'B bonds to less substituted C; H bonds to more substituted C (syn).'},{step:'H₂O₂/NaOH oxidises C–B → C–OH with retention of configuration.'}],note:'Result: anti-Markovnikov + syn addition. No rearrangement. Net: opposite of acid-catalysed hydration.'},{id:'ene-11',section:'Epoxidation',reagent:'Peracid (mCPBA, RCO₃H)',conditions:'CH₂Cl₂, RT',product:'Epoxide (oxirane)',type:'Syn Addition',tags:['JEE Adv'],mechanism:[{step:'Peracid delivers electrophilic O to the π bond from one face (concerted).'},{step:'Syn epoxidation → retention of geometry (cis alkene → cis epoxide).'}],note:'Epoxides are strained; opened by nucleophiles (SN2: inversion → anti product).'},{id:'ene-12',section:'Cyclopropanation',reagent:'CHCl₃ + KOH → :CCl₂; or CH₂I₂ + Zn–Cu (Simmons-Smith)',conditions:'Strong base for carbene',product:'Cyclopropane derivative',type:'Carbene Addition',tags:['JEE Adv'],mechanism:[{step:'Base removes HCl from CHCl₃ → trichloromethyl anion → :CCl₂ (dichlorocarbene).'},{step:'Carbene is a singlet electrophile; adds syn to alkene → cyclopropane.'}],note:'Simmons-Smith: Zn-carbenoid (not free carbene), also syn specific. No rearrangement.'},{id:'ene-13',section:'Diels-Alder',reagent:'Diene + Dienophile (e.g., maleic anhydride)',conditions:'Heat; endo rule',product:'Cyclohexene derivative (syn, stereospecific)',type:'[4+2] Cycloaddition',tags:['JEE Adv','★ Classic'],mechanism:[{step:'Concerted [4+2] cycloaddition: diene (s-cis) reacts with dienophile.'},{step:'Suprafacial on both components → syn addition of all new bonds.'},{step:'Endo rule: larger groups prefer endo (kinetic product).'}],note:'Diene must be s-cis. Electron-withdrawing groups on dienophile activate the reaction. Retro-DA also occurs at high T.'},{id:'ene-14',section:'Polymerisation',reagent:'Initiator (free radical / acid / Ziegler-Natta)',conditions:'High pressure',product:'Polymer (polyethylene, polypropylene)',type:'Addition Polymerisation',tags:['JEE Adv'],mechanism:[{step:'Initiation: In• + CH₂=CH₂ → In–CH₂–CH₂•.'},{step:'Propagation: chain grows by repeated addition to monomer.'},{step:'Termination: coupling or disproportionation of radicals.'}],note:'Ziegler-Natta (TiCl₄/Al(C₂H₅)₃) gives isotactic polypropylene (stereoregular).'}]}},
+  alkyne:{label:'Alkynes',formula:'CₙH₂ₙ₋₂',color:'#f7a06a',description:'Unsaturated hydrocarbons with C≡C triple bond. More reactive than alkenes; terminal alkynes are acidic.',classes:null,data:{all:[{id:'yn-1',section:'Acidic Nature',reagent:'NaNH₂ (sodamide) or Na metal',conditions:'Terminal alkyne only',product:'Sodium acetylide (RC≡CNa) + H₂/NH₃',type:'Acid-Base',tags:['JEE Adv','Must Know'],mechanism:[{step:'sp C–H bond is more acidic (pKa ~25) vs sp² (~44) vs sp³ (~50).'},{step:'NH₂⁻ (conjugate base of NH₃, pKa 38) deprotonates alkyne → alkynide.'}],note:'Acidity order: RC≡C–H > H₂O > ROH > R₂C=CH₂ > alkane. Acetylide = good nucleophile.'},{id:'yn-2',section:'Addition of HX',reagent:'HX (1 equiv)',conditions:'One addition',product:'Vinyl Halide (Markovnikov)',type:'AdE',tags:['JEE Adv','Markovnikov'],mechanism:[{step:'H⁺ adds to one sp C → vinyl cation → X⁻ attacks.'},{step:'Markovnikov: H to terminal C (gives more stable vinyl cation on internal C).'}],note:'2 equiv HX → geminal dihalide (both X on same C). Product of 2nd addition also Markovnikov.'},{id:'yn-3',section:'Addition of X₂',reagent:'Br₂ (1 equiv)',conditions:'CCl₄',product:'Trans-1,2-dibromo alkene (anti)',type:'AdE (anti)',tags:['JEE Adv'],mechanism:[{step:'Bromonium ion forms across triple bond.'},{step:'Br⁻ attacks anti → trans-vinyl dibromide (E-isomer).'}],note:'2 equiv Br₂ → tetrabromo compound. Decolourises Br₂/CCl₄ → test for unsaturation.'},{id:'yn-4',section:'Hydration',reagent:'H₂O / HgSO₄ / H₂SO₄',conditions:'Markovnikov (Kucherov)',product:'Ketone (from internal) or Acetaldehyde (from terminal)',type:'Hydration',tags:['JEE Adv','Must Know'],mechanism:[{step:'Hg²⁺ coordinates to π electrons; H₂O attacks (Markovnikov).'},{step:'Vinyl alcohol (enol) intermediate.'},{step:'Tautomerisation: enol → ketone (keto form more stable).'}],note:'CH≡CH + H₂O → CH₃CHO (acetaldehyde). RC≡CH + H₂O → RCOCH₃ (methyl ketone).'},{id:'yn-5',section:'Hydroboration-Oxidation',reagent:'Sia₂BH then H₂O₂/NaOH',conditions:'Anti-Markovnikov',product:'Aldehyde (from terminal alkyne)',type:'Anti-Markovnikov Hydration',tags:['JEE Adv','★ Classic'],mechanism:[{step:'Hindered borane (Sia₂BH) adds to terminal carbon (anti-Markovnikov).'},{step:'Vinyl borane intermediate → oxidised by H₂O₂/NaOH → vinyl alcohol.'},{step:'Enol tautomerises to aldehyde.'}],note:'Alkyne → aldehyde (anti-Markovnikov). Contrast: Hg²⁺ → Markovnikov (ketone from terminal).'},{id:'yn-6',section:'Reduction (Lindlar)',reagent:"H₂ / Lindlar's catalyst (Pd/BaSO₄/quinoline)",conditions:'Partial reduction',product:'cis-Alkene (syn addition)',type:'Syn Reduction',tags:['JEE Adv','Must Know'],mechanism:[{step:'Lindlar catalyst poisons Pd so it only does one addition of H₂.'},{step:'Both H atoms delivered from same face → cis (Z) alkene.'}],note:'Gives Z-alkene exclusively. Contrast: Na/NH₃(l) → trans (E) alkene.'},{id:'yn-7',section:'Reduction (Na–NH₃)',reagent:'Na or Li / liquid NH₃',conditions:'Birch-type; dissolving metal',product:'trans-Alkene (anti addition)',type:'Anti Reduction',tags:['JEE Adv','Must Know'],mechanism:[{step:'Solvated electron (e⁻ from Na) adds to alkyne → radical anion.'},{step:'Protonation by NH₃ → vinyl radical (trans more stable → trans vinyl radical).'},{step:'Second e⁻ → carbanion; protonation → trans alkene.'}],note:'Gives E-alkene (trans). Remember: Lindlar→Z, Na/NH₃→E.'},{id:'yn-8',section:'Alkynylation (Nucleophilic)',reagent:"RC≡CNa + R'X",conditions:'SN2 on alkyl halide',product:"R–C≡C–R' (chain extended)",type:'Nucleophilic Substitution',tags:['JEE Adv','★ Classic'],mechanism:[{step:'Sodium acetylide (RC≡C⁻Na⁺) is a strong nucleophile.'},{step:"SN2 on primary alkyl halide → new C–C bond formed."}],note:"Used to build carbon chains. Only works with 1° R'X (2° gives elimination)."},{id:'yn-9',section:'Ozonolysis',reagent:'O₃ then H₂O',conditions:'Oxidative workup',product:'Two Carboxylic Acids or CO₂',type:'Oxidative Cleavage',tags:['JEE Adv'],mechanism:[{step:'O₃ adds to triple bond → cleavage of both π bonds.'},{step:'Hydrolysis → two carboxylic acid fragments (or CO₂ from terminal).'}],note:"RC≡CR' → RCOOH + R'COOH. Terminal: RC≡CH → RCOOH + CO₂."},{id:'yn-10',section:'Cycloaddition (Reppe)',reagent:'HC≡CH × 4 (Ni catalyst)',conditions:'Ni(CO)₄, heat',product:'Cyclooctatetraene (COT)',type:'Cyclotetramerisation',tags:['JEE Adv'],mechanism:[{step:'4 molecules of acetylene couple via Ni catalyst.'},{step:'Produces tub-shaped cyclooctatetraene (non-aromatic, antiaromatic COT).'}],note:'With [Co] catalyst: HC≡CH × 3 → benzene (cyclotrimerisation, Reppe).'},{id:'yn-11',section:'Silver/Copper Acetylide',reagent:'AgNO₃/NH₃ or Cu₂Cl₂/NH₃',conditions:'Terminal alkyne only',product:'Silver acetylide (RC≡CAg) or Cu acetylide — white/red ppt',type:'Metal Salt Formation',tags:['JEE Adv','Test'],mechanism:[{step:'Ag⁺ (from [Ag(NH₃)₂]⁺) replaces terminal alkynyl H → white ppt.'},{step:'Cu⁺ (from Cu₂Cl₂/NH₃) → reddish-brown ppt of Cu acetylide.'}],note:'Used to distinguish terminal from internal alkynes. Explode when dry (care!). Internal alkynes → no precipitate.'}]}},
+  'alkyl-halide':{label:'Alkyl Halides',formula:'R–X',color:'#f76ab8',description:'Haloalkanes with C–X bond. Central to substitution (SN1, SN2) and elimination (E1, E2) reactions.',classes:['SN1','SN2','E2','organometal'],data:{SN1:[{id:'rh-sn1-1',section:'SN1 Reactions',reagent:'H₂O / ROH / RCOOH',conditions:'Polar protic solvent, 3° or allylic/benzylic RX',product:'Alcohol / Ether / Ester + HX',type:'SN1',tags:['JEE Adv','Must Know','SN1'],mechanism:[{step:'Rate-determining step: RX → R⁺ + X⁻ (unimolecular ionisation).'},{step:'Carbocation stabilised by hyperconjugation/resonance (3°>2°).'},{step:'Nucleophile attacks planar carbocation → racemisation (±50:50).'}],note:'Rate = k[RX]. Order: 3° > 2° >> 1°. Favoured by polar protic solvents (H₂O, ROH). Rearrangements possible.'},{id:'rh-sn1-2',section:'SN1 Reactions',reagent:'AgNO₃ in ethanol',conditions:'3° > 2° > 1° (rate)',product:'AgX precipitate + carbocation product',type:'SN1 Test',tags:['JEE Adv','Test'],mechanism:[{step:'Ag⁺ abstracts X⁻ → drives ionisation (SN1).'},{step:'AgX precipitates; rate indicates RX type.'}],note:'AgF>AgCl>AgBr>AgI in solubility (AgF soluble; AgI most insoluble yellow ppt).'},{id:'rh-sn1-3',section:'SN1 Reactions',reagent:'Allylic/Benzylic rearrangement',conditions:'SN1 conditions',product:'Allylic shift product (resonance-stabilised cation)',type:'Rearrangement',tags:['JEE Adv','★ Classic'],mechanism:[{step:'Allylic/benzylic cation formed → resonance structures.'},{step:'Nucleophile attacks either end of the allylic system → mixture of products.'}],note:"CH₂=CH–CH₂⁺ ↔ ⁺CH₂–CH=CH₂. Attack at both ends → SN1' product."},{id:'rh-sn1-4',section:'SN1 Reactions',reagent:'Hydride / Methyl shift',conditions:'3° carbocation forms via SN1',product:'Rearranged substitution product',type:'Rearrangement',tags:['JEE Adv','★ Classic'],mechanism:[{step:'Initial 2° carbocation formed.'},{step:'Adjacent H or methyl migrates (1,2-shift) → more stable 3° carbocation.'},{step:'Nucleophile attacks rearranged cation.'}],note:'Neopentyl-type substrates always rearrange under SN1 conditions.'}],SN2:[{id:'rh-sn2-1',section:'SN2 Reactions',reagent:'NaOH (aq)',conditions:'Primary RX, polar aprotic or protic',product:'Alcohol (inversion)',type:'SN2',tags:['JEE Adv','Must Know','SN2'],mechanism:[{step:'Rate = k[RX][Nu⁻] — bimolecular, one step.'},{step:'Nu attacks anti to leaving group → Walden inversion (backside attack).'},{step:'Transition state: trigonal bipyramidal (5-coordinate C).'}],note:'Order: CH₃X > 1° > 2° >> 3° (steric effect). No rearrangement (concerted).'},{id:'rh-sn2-2',section:'SN2 Reactions',reagent:'NaCN / KCN',conditions:'Polar aprotic (DMSO/acetone), 1° RX',product:'Nitrile (RCN) — chain lengthened by 1C',type:'SN2',tags:['JEE Adv','Must Know'],mechanism:[{step:'CN⁻ is ambident nucleophile (C or N end).'},{step:'Attacks via C → nitrile (major in polar aprotic).'},{step:'Attacks via N → isonitrile (isocyanide, minor or in polar protic).'}],note:'Nitrile can be hydrolysed → amide → carboxylic acid. Useful for chain extension.'},{id:'rh-sn2-3',section:'SN2 Reactions',reagent:'NaNO₂ / AgNO₂',conditions:'Ambident Nu',product:'NaNO₂ → nitroalkane (C-attack); AgNO₂ → alkyl nitrite (O-attack)',type:'SN2',tags:['JEE Adv','★ Classic'],mechanism:[{step:'NO₂⁻ is ambident: N-end gives nitroalkane (R–NO₂); O-end gives nitrite ester (R–ONO).'},{step:'Hard-hard: Ag+ coordinates O → O-attack (RONO); free Na+ → harder N attack (RNO₂).'}],note:'HSAB principle explains selectivity. NaNO₂ → RNO₂. AgNO₂ → RONO.'},{id:'rh-sn2-4',section:'SN2 Reactions',reagent:'KI in acetone (Finkelstein)',conditions:'Polar aprotic, equilibrium shift',product:'Alkyl Iodide (RI) from RCl or RBr',type:'SN2 (Halide Exchange)',tags:['JEE Adv'],mechanism:[{step:'I⁻ displaces Cl⁻/Br⁻ via SN2 (KI soluble in acetone; KCl/KBr precipitate).'},{step:'Equilibrium driven forward by insolubility of product KX.'}],note:'Finkelstein: R–Cl + KI → R–I + KCl↓ (acetone). Used to make alkyl iodides.'},{id:'rh-sn2-5',section:'SN2 Reactions',reagent:"NaOR' (sodium alkoxide)",conditions:'Williamson ether synthesis',product:"Ether (ROR')",type:'SN2',tags:['JEE Adv','Must Know'],mechanism:[{step:"RO⁻ attacks C of R'X via SN2 → ether + X⁻."}],note:"Primary R'X required. Tertiary gives elimination. Used to make asymmetric ethers."},{id:'rh-sn2-6',section:'SN2 Reactions',reagent:'NaN₃',conditions:'SN2',product:'Alkyl Azide (RN₃) → amine (after reduction)',type:'SN2',tags:['JEE Adv'],mechanism:[{step:'N₃⁻ attacks RX via SN2 → alkyl azide.'},{step:'Reduction (LiAlH₄ or H₂/Pd) → primary amine (RNH₂).'}],note:'Gabriel–azide route to primary amines without over-alkylation problem.'},{id:'rh-sn2-7',section:'SN2 Reactions',reagent:'Malonic ester / acetoacetic ester',conditions:'NaOEt, then RX',product:'α-substituted acid/ketone',type:'SN2 (Malonic)',tags:['JEE Adv','★ Classic'],mechanism:[{step:'NaOEt deprotonates active methylene of malonic ester → stabilised enolate.'},{step:'Enolate attacks RX (SN2) → alkylation.'},{step:'Hydrolysis + decarboxylation → substituted acetic acid.'}],note:'Double alkylation possible. Malonic ester synthesis = standard route to substituted acetic acids.'}],E2:[{id:'rh-e-1',section:'E2 Elimination',reagent:'KOH (alc) / NaOEt',conditions:'Polar aprotic or alcoholic, strong base',product:'Alkene (Saytzeff major)',type:'E2',tags:['JEE Adv','Must Know','E2'],mechanism:[{step:'Rate = k[RX][Base] — bimolecular, concerted.'},{step:'Anti-periplanar arrangement of H and X required (dihedral 180°).'},{step:'β-H removed by base; C–X breaks; C=C forms simultaneously.'}],note:'Saytzeff product (more substituted alkene) major. Hofmann with bulky base.'},{id:'rh-e-2',section:'E2 Elimination',reagent:'Bulky base: KO-t-Bu',conditions:'tert-Butoxide, E2',product:'Hofmann product (less substituted alkene)',type:'E2 (Hofmann)',tags:['JEE Adv'],mechanism:[{step:'Bulky base cannot access hindered β-H → goes to less hindered position.'},{step:'Less substituted alkene (Hofmann product) forms.'}],note:'Small base (EtO⁻) → Saytzeff. Bulky base (t-BuO⁻) → Hofmann.'},{id:'rh-e-3',section:'E2 Stereospecificity',reagent:'KOH/EtOH',conditions:'Anti-periplanar geometry',product:'Specific alkene geometry (E or Z)',type:'Stereospecific E2',tags:['JEE Adv','★ Classic'],mechanism:[{step:'E2 requires anti arrangement of H and X (180° dihedral).'},{step:'For meso compound → one alkene geometry; (R,R) or (S,S) → another.'}],note:'meso-2,3-dibromobutane → meso diastereomer → E-2-butene. (±)pair → Z-2-butene.'},{id:'rh-e-4',section:'E1 Elimination',reagent:'Weak base / polar protic solvent',conditions:'Tertiary RX, heat',product:'Alkene (Saytzeff, rearrangement possible)',type:'E1',tags:['JEE Adv'],mechanism:[{step:'First step: ionisation → carbocation (rate-determining).'},{step:'Second step: base removes β-H → alkene.'}],note:'E1 and SN1 compete (both via carbocation). High temp favours elimination.'},{id:'rh-e-5',section:'Dehydrohalogenation (2 moles base)',reagent:'2 moles KOH (alc)',conditions:'Geminal or vicinal dihalide',product:'Alkyne',type:'Double E2',tags:['JEE Adv','Must Know'],mechanism:[{step:'First E2: vicinal dihalide → vinyl halide.'},{step:'Second E2: vinyl halide (anti-periplanar required, needs strong base) → alkyne.'}],note:'Geminal or vicinal dihalide + 2 KOH(alc) → alkyne. NaNH₂ used for last step if needed.'}],organometal:[{id:'rh-om-1',section:'Grignard',reagent:'Mg / dry ether → RMgX',conditions:'Anhydrous, inert atmosphere',product:'Grignard reagent (RMgX)',type:'Organometallic',tags:['JEE Adv','Must Know'],mechanism:[{step:'Mg inserts into C–X bond (oxidative addition across Mg surface).'},{step:'Polarity reversal: C⁻ (carbanion equivalent) in RMgX.'}],note:'Extremely moisture-sensitive. Acts as nucleophile (R⁻) and strong base.'},{id:'rh-om-2',section:'Grignard + Carbonyl',reagent:"RMgX + HCHO → 1° OH; RCHO → 2° OH; R'COR → 3° OH",conditions:'Dry ether, then H₃O⁺',product:'Primary/Secondary/Tertiary Alcohol',type:'Nucleophilic Addition',tags:['JEE Adv','Must Know'],mechanism:[{step:'R⁻ (from RMgX) attacks electrophilic carbonyl C.'},{step:'Alkoxide formed → protonation by H₃O⁺ gives alcohol.'}],note:'HCHO → 1°; aldehyde → 2°; ketone → 3°. CO₂ + RMgX → RCOOH after H₃O⁺.'},{id:'rh-om-3',section:'Grignard + CO₂',reagent:'RMgX + CO₂ (dry ice), then H₃O⁺',conditions:'Anhydrous',product:'Carboxylic Acid (RCOOH) — one more C',type:'Carboxylation',tags:['JEE Adv','Must Know'],mechanism:[{step:'R⁻ attacks C of CO₂ → carboxylate (RCOOMgX).'},{step:'Protonation → RCOOH.'}],note:'Best method to introduce –COOH. Product has one more carbon than RMgX.'},{id:'rh-om-4',section:'Wurtz (modified)',reagent:"RLi or RMgX + R'X",conditions:'Coupling reaction',product:"R–R' (cross-coupling)",type:'Coupling',tags:['JEE Adv'],mechanism:[{step:'Transmetalation or direct SN2 of organometallic on alkyl halide.'}],note:'Better than Wurtz reaction for unsymmetrical coupling (though Pd-catalysis is more modern).'},{id:'rh-om-5',section:'Gilman Reagent (R₂CuLi)',reagent:'2 RLi + CuI → R₂CuLi',conditions:'Ether, -78°C',product:"1,4-addition (conjugate) to enones / coupling with R'X",type:'Conjugate Addition',tags:['JEE Adv','★ Classic'],mechanism:[{step:'R₂CuLi undergoes 1,4-addition to α,β-unsaturated carbonyl (not 1,2).'},{step:'Soft nucleophile (R₂CuLi) → soft electrophile (β-carbon).'}],note:'Grignard → 1,2 addition (hard); Gilman → 1,4 addition. Coupling with vinyl/aryl halides.'},{id:'rh-om-6',section:'Corey-House (Organocopper)',reagent:"R₂CuLi + R'X → R–R'",conditions:'Primary alkyl, vinyl, aryl halides',product:'Alkane / Cross-coupling product',type:'Coupling',tags:['JEE Adv'],mechanism:[{step:'Gilman reagent undergoes SN2-like coupling with R\'X.'},{step:'Highly selective; avoids scrambling seen in Wurtz.'}],note:"Used to make complex alkanes; avoids Wurtz's random coupling problem."}]}},
+  'aryl-halide':{label:'Aryl Halides',formula:'Ar–X',color:'#c46af7',description:'Halides directly bonded to aromatic ring. Very resistant to SN2; undergo nucleophilic aromatic substitution (SNAr) and benzyne routes.',classes:null,data:{all:[{id:'arh-1',section:'EAS on Ring',reagent:'Cl₂/AlCl₃ or Br₂/FeBr₃',conditions:'Electrophilic Aromatic Substitution',product:'Ortho + Para halogenated product',type:'EAS',tags:['JEE Adv','Must Know'],mechanism:[{step:'X group on ring: –I effect (deactivates ring) but +M effect (lone pair donation → o/p director).'},{step:'Arenium ion (σ-complex) stabilised at o and p positions.'}],note:'X is ortho-para director but ring deactivator vs benzene. More o/p than meta product.'},{id:'arh-2',section:'Nucleophilic Aromatic Substitution (SNAr)',reagent:'NaOH (aq), 300°C, 300 atm',conditions:'EWG must activate ring (e.g. NO₂)',product:'Phenol (ArOH) from ArX',type:'SNAr (Addition-Elimination)',tags:['JEE Adv','Must Know'],mechanism:[{step:'Nu⁻ (OH⁻) attacks ipso carbon → Meisenheimer complex (rate-determining).'},{step:'X⁻ leaves → product.'},{step:'EWG (NO₂) at ortho/para stabilises Meisenheimer complex.'}],note:'2,4-dinitrochlorobenzene: SNAr very fast. Without EWG: chlorobenzene requires harsh 300°C. Activated by ortho/para NO₂.'},{id:'arh-3',section:'Benzyne Mechanism',reagent:'NaNH₂ / Sodamide',conditions:'Strong base, no EWG on ring',product:'Aniline (mixture of o/p) via benzyne intermediate',type:'Benzyne (Elimination-Addition)',tags:['JEE Adv','★ Classic'],mechanism:[{step:'NaNH₂ abstracts ortho H → loss of Cl⁻ → benzyne (strained triple bond).'},{step:'NH₃/NH₂⁻ attacks either end of benzyne symmetrically → mixture.'}],note:'Confirmed by isotope labelling (¹⁴C). Gives ~50:50 ortho and meta product relative to label.'},{id:'arh-4',section:'Ullmann Coupling',reagent:'2 ArX + Cu (dust)',conditions:'Δ, 200°C',product:'Biaryl (Ar–Ar)',type:'Coupling',tags:['JEE Adv'],mechanism:[{step:'Cu oxidatively adds to C–X bond → ArCu–X.'},{step:'Second ArX reductively eliminates → Ar–Ar.'}],note:'Older method for biaryl synthesis. Modern: Suzuki, Negishi, Kumada (Pd-catalysed).'},{id:'arh-5',section:'Grignard from Aryl Halide',reagent:'ArX + Mg / dry ether',conditions:'Anhydrous',product:'Aryl Grignard (ArMgX)',type:'Organometallic',tags:['JEE Adv','Must Know'],mechanism:[{step:'Mg inserts into Ar–X bond (ArBr and ArI easier; ArCl slower).'}],note:'ArMgX is an excellent nucleophile; reacts with carbonyls same as alkyl Grignard.'},{id:'arh-6',section:'Reduction',reagent:'Zn/HCl, or H₂/Ni, or LiAlH₄',conditions:'Vigorous conditions needed',product:'Arene (Ar–H): replacement of X with H',type:'Reduction',tags:['JEE Adv'],mechanism:[{step:'Hydrogenolysis: H₂/Raney Ni → Ar–H + HX.'},{step:'LiAlH₄ rarely reduces Ar–X (Ar–X bond too strong); usually needs activated ring.'}],note:'Better via Pd-C/H₂. Birch reduction reduces ring but not C–X usually.'},{id:'arh-7',section:'Preparation (from diazonium)',reagent:'Sandmeyer: Cu₂X₂/HX; or Schiemann (HBF₄) for F',conditions:'Diazonium salt intermediate',product:'ArX from ArNH₂',type:'Diazotisation → Sandmeyer',tags:['JEE Adv','Must Know'],mechanism:[{step:'ArNH₂ + NaNO₂/HX (0-5°C) → ArN₂⁺ (diazonium salt).'},{step:'Sandmeyer: ArN₂⁺ + Cu₂Cl₂ → ArCl + N₂ + Cu⁺.'},{step:'Schiemann (for F): ArN₂⁺ + BF₄⁻ → ArN₂BF₄; dry heat → ArF + BF₃ + N₂.'}],note:'Only reliable route to aryl fluoride (Schiemann) and aryl iodide (KI/ArN₂⁺ directly).'},{id:'arh-8',section:'Oxidative Addition (Palladium)',reagent:'Pd(0) + ArX → Ar–Pd–X',conditions:'Part of Suzuki/Heck/Negishi cycle',product:'Oxidative addition intermediate (Pd(II))',type:'Cross-Coupling',tags:['JEE Adv'],mechanism:[{step:'Pd(0) inserts into Ar–X bond → Ar–Pd(II)–X.'},{step:'Transmetalation with boronic acid (Suzuki) or Zn (Negishi).'},{step:'Reductive elimination → Ar–R + Pd(0) regenerated.'}],note:'ArI > ArBr >> ArCl in reactivity toward Pd(0).'},{id:'arh-9',section:'SNAr with NH₃',reagent:'NH₃ (excess), high temp/pressure',conditions:'EWG needed ortho/para to X',product:'Aniline derivative (ArNH₂)',type:'SNAr',tags:['JEE Adv'],mechanism:[{step:'NH₃ acts as nucleophile → Meisenheimer complex.'},{step:'Loss of X⁻ → aniline product.'}],note:'Example: 2,4-dinitrochlorobenzene + NH₃ → 2,4-dinitroaniline (fast at RT).'},{id:'arh-10',section:'Fittig Reaction',reagent:'ArX + R–X + 2Na',conditions:'Dry ether',product:'Ar–R (alkylarene)',type:'Coupling (Fittig)',tags:['JEE Adv'],mechanism:[{step:'Aryl–Na and R–Na formed; aryl–Na attacks RX → Ar–R.'}],note:'Fittig: Ar–X + Ar–X + 2Na → Ar–Ar. Wurtz-Fittig: ArX + RX + 2Na → Ar–R.'}]}}
 };
 
-// ── Search index ──
-const searchIndex = [];
-Object.entries(REACTIONS).forEach(([pageKey, page]) => {
-  Object.entries(page.data).forEach(([cls, rxns]) => {
-    rxns.forEach(rxn => {
-      searchIndex.push({ id: rxn.id, pageKey, cls, reagent: rxn.reagent, product: rxn.product, conditions: rxn.conditions, section: rxn.section, label: page.label });
-    });
+// ════════════════════════════════════════════════════════
+// SEARCH INDEX
+// ════════════════════════════════════════════════════════
+const searchIndex=[];
+Object.entries(REACTIONS).forEach(([pk,page])=>{
+  Object.entries(page.data).forEach(([cls,rxns])=>{
+    rxns.forEach(r=>searchIndex.push({id:r.id,pageKey:pk,cls,reagent:r.reagent,product:r.product,conditions:r.conditions,section:r.section,label:page.label}));
   });
 });
 
-let currentPage = 'home';
-let currentClass = null;
+// ════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════
+let currentPage='home',currentClass=null,sessionMode=null,
+    timerSeconds=30*60,timerInterval=null,sessionActive=false,sidebarOpen=false;
 
-function nav(page, cls) { currentPage = page; currentClass = cls || null; render(); updateSidebar(); }
-
-function updateSidebar() {
-  document.querySelectorAll('.sidebar-item').forEach(el => el.classList.toggle('active', el.dataset.page === currentPage && !currentClass));
-  document.querySelectorAll('.sidebar-sub').forEach(el => el.classList.toggle('active', el.dataset.page === currentPage && el.dataset.class === currentClass));
+// ════════════════════════════════════════════════════════
+// AUTH — ONLY PRE-COMPUTED HASHES. NO PLAINTEXT IN SOURCE.
+// student: react2025   team: atlas#admin
+// ════════════════════════════════════════════════════════
+const HASHES={
+  student:'dfe20374af4c9753b75df2352b98f7a4f790d9b5bdbf4cf47ab295d453a04ecf',
+  team:   'bc37a69e5192da6f5d7b7cf4ad7c6853fadd1097ed1dcc4c92188ac35d02f5b4'
+};
+async function sha256(s){
+  const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
 }
 
-function render() {
-  const main = document.getElementById('main');
-  if (currentPage === 'home') { main.innerHTML = renderHome(); return; }
-  const page = REACTIONS[currentPage];
-  if (!page) { main.innerHTML = '<div class="empty">Page not found.</div>'; return; }
-  if (page.classes && !currentClass) { main.innerHTML = renderPageHero(page) + renderClassSelector(page); }
-  else { const cls = currentClass || 'all'; const rxns = page.data[cls] || []; main.innerHTML = renderPageHero(page, cls) + renderMindMap(rxns, page.color, cls); }
+// ════════════════════════════════════════════════════════
+// SCREENSHOT PROTECTION — PROACTIVE STRATEGY
+//
+// Core insight: iOS grabs the framebuffer BEFORE any JS event.
+// So instead of reacting, we:
+//  1) Keep an always-on CSS filter (contrast/sat barely off)
+//     so any captured frame is already degraded.
+//  2) Show the shield SYNCHRONOUSLY (no animation, no rAF)
+//     on every signal that PRECEDES a screenshot:
+//     - visibilitychange (fires before iOS screenshot preview)
+//     - window blur (fires when control centre opens)
+//     - touchstart with 3 fingers (Android gesture)
+//     - resize (iOS status bar blink)
+// ════════════════════════════════════════════════════════
+const shield=document.getElementById('ultra-shield');
+
+function showShield(){
+  if(sessionMode!=='student')return;
+  shield.classList.add('active');
+  document.body.classList.add('shield-active');
+}
+function hideShield(ms=600){
+  setTimeout(()=>{
+    shield.classList.remove('active');
+    document.body.classList.remove('shield-active');
+  },ms);
 }
 
-function renderHome() {
-  const cards = [
-    { key: 'alcohol', icon: '🧪', desc: 'Primary, Secondary, Tertiary reactions, Oxidation, Esterification, Dehydration', count: '20+' },
-    { key: 'alkane', icon: '⛽', desc: 'Free radical halogenation, Combustion, Wurtz, Kolbe, Cracking', count: '9' },
-    { key: 'alkene', icon: '🔗', desc: 'Electrophilic addition, Ozonolysis, Diels-Alder, Hydroboration', count: '14' },
-    { key: 'alkyne', icon: '⚡', desc: 'Acidic nature, Lindlar, Na/NH₃, Hydration, Cycloaddition', count: '11' },
-    { key: 'alkyl-halide', icon: '🧲', desc: 'SN1, SN2, E1/E2, Grignard, Gilman, Finkelstein, Wurtz', count: '22' },
-    { key: 'aryl-halide', icon: '🔮', desc: 'SNAr, Benzyne, Sandmeyer, Ullmann, Coupling', count: '10' },
-  ];
-  return `<div class="page-hero"><h1>Organic Reaction<br>Atlas</h1><p>JEE Advanced — comprehensive reaction mind map.<br>Click any substrate to explore reactions.</p></div>
-  <div class="home-grid">${cards.map(c => { const page = REACTIONS[c.key]; return `<div class="home-card" style="--card-color:${page.color}" onclick="nav('${c.key}')"><div class="home-card-icon">${c.icon}</div><h3>${page.label}</h3><p>${c.desc}</p><div class="rxn-count">${c.count} reactions</div></div>`; }).join('')}</div>
-  <div style="margin-top:2rem;padding:1.2rem;background:var(--surface);border:1px solid var(--border);border-radius:12px;font-size:0.8rem;color:var(--muted);line-height:1.7"><strong style="color:var(--accent2)">★ How to use:</strong> Click a substrate → select the reaction class → click any card to expand product + mechanism → toggle the mechanism dropdown for step-by-step notes. Use the search bar to find any reagent or product instantly.</div>`;
-}
+// Capture phase (true) fires before bubbling — maximum priority
+document.addEventListener('visibilitychange',()=>{
+  if(sessionMode!=='student')return;
+  document.hidden?showShield():hideShield(700);
+},true);
 
-function renderPageHero(page, cls) {
-  const clsLabel = cls && cls !== 'all' ? (cls === 'primary' ? '1° Primary' : cls === 'secondary' ? '2° Secondary' : cls === 'tertiary' ? '3° Tertiary' : cls) : '';
-  const classTabsHtml = page.classes ? `<div class="class-tabs">${page.classes.map(c => `<div class="class-tab ${currentClass === c ? 'active' : ''}" onclick="nav('${currentPage}','${c}')">${c === 'primary' ? '1° Primary' : c === 'secondary' ? '2° Secondary' : c === 'tertiary' ? '3° Tertiary' : c === 'SN1' ? 'SN1' : c === 'SN2' ? 'SN2' : c === 'E2' ? 'E1/E2' : c === 'organometal' ? 'Organometallics' : c}</div>`).join('')}</div>` : '';
-  return `<div class="breadcrumb"><span onclick="nav('home')">Home</span><span class="sep">›</span><span onclick="nav('${currentPage}')" class="${!cls ? 'current' : ''}">${page.label}</span>${cls && cls !== 'all' ? `<span class="sep">›</span><span class="current">${clsLabel}</span>` : ''}</div>
-  <div class="page-hero"><h1 style="color:${page.color}">${page.label}</h1><div class="formula">${page.formula}</div><p style="margin-top:0.5rem">${page.description}</p>${classTabsHtml}</div>`;
-}
+window.addEventListener('pagehide',()=>{if(sessionMode==='student')showShield()});
+window.addEventListener('pageshow',()=>{if(sessionMode==='student')hideShield(500)});
+window.addEventListener('blur',()=>{if(sessionMode==='student')showShield()},true);
+window.addEventListener('focus',()=>{if(sessionMode==='student')hideShield(600)},true);
 
-function renderClassSelector(page) {
-  const labels = { primary: '1° Primary', secondary: '2° Secondary', tertiary: '3° Tertiary', SN1: 'SN1 Reactions', SN2: 'SN2 Reactions', E2: 'E1/E2 Eliminations', organometal: 'Organometallics' };
-  const descs = { primary: 'Oxidation to aldehyde/acid, SOCl₂, HX, dehydration', secondary: 'Oxidation to ketone, Lucas test, Oppenauer, Iodoform', tertiary: 'Pinacol, Wagner-Meerwein, SN1, dehydration (easiest)', SN1: 'Unimolecular, carbocation, racemisation, rearrangements', SN2: 'Bimolecular, backside attack, inversion, no rearrangement', E2: 'Anti-periplanar, Saytzeff/Hofmann, stereospecific, E1', organometal: 'Grignard, Gilman, Wurtz, Corey-House coupling' };
-  return `<div class="home-grid">${page.classes.map(c => `<div class="home-card" style="--card-color:${page.color}" onclick="nav('${currentPage}','${c}')"><div class="home-card-icon">⚗️</div><h3>${labels[c] || c}</h3><p>${descs[c] || ''}</p><div class="rxn-count" style="color:${page.color}">${(page.data[c]||[]).length} reactions</div></div>`).join('')}</div>`;
-}
+// Multi-finger touch: Android 3-finger screenshot
+document.addEventListener('touchstart',e=>{
+  if(sessionMode!=='student')return;
+  if(e.touches.length>=3)showShield();
+},{passive:true,capture:true});
 
-function renderMindMap(rxns, color, cls) {
-  if (!rxns.length) return '<div class="empty">No reactions found.</div>';
-  const sections = {};
-  rxns.forEach(r => { if (!sections[r.section]) sections[r.section] = []; sections[r.section].push(r); });
-  let html = '<div class="mind-map">';
-  Object.entries(sections).forEach(([sec, items]) => {
-    html += `<div class="section-head"><h2>${sec}</h2><div class="pill" style="background:${color}22;color:${color};border:1px solid ${color}44">${items.length}</div><div class="section-line"></div></div>`;
-    items.forEach((rxn, idx) => { html += renderCard(rxn, color, idx + 1); });
-  });
-  html += '</div>';
-  return html;
-}
-
-function renderCard(rxn, color, num) {
-  const tagHtml = rxn.tags.map(t => { let c = 'tag-type'; if (t === 'JEE Adv') c = 'tag-jee'; else if (t === 'Must Know') c = 'tag-imp'; else if (t === '★ Classic') c = 'tag-green'; return `<span class="tag ${c}">${t}</span>`; }).join('');
-  const mechHtml = rxn.mechanism ? `<div class="mech-toggle" id="mech-toggle-${rxn.id}" onclick="toggleMech('${rxn.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>Show Mechanism</div><div class="mech-body" id="mech-${rxn.id}">${rxn.mechanism.map((s,i) => `<div class="mech-step"><div class="mech-step-num">${i+1}</div><div class="mech-step-text">${s.step}</div></div>`).join('')}${rxn.note ? `<div class="mech-note">💡 ${rxn.note}</div>` : ''}</div>` : '';
-  return `<div class="rxn-card" id="card-${rxn.id}"><div class="rxn-card-header" onclick="toggleCard('${rxn.id}')"><div class="rxn-left"><div class="rxn-num" style="background:${color}22;color:${color}">${num}</div><div class="rxn-reagent-row"><div class="rxn-reagent">${rxn.reagent}</div><div class="rxn-conditions">${rxn.conditions}</div></div></div><div class="rxn-arrow">→</div><div class="rxn-product-preview" style="color:${color}">${rxn.product.split('(')[0].trim()}</div><div class="rxn-expand-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div></div><div class="rxn-body"><div class="rxn-full"><div class="rxn-box"><div class="label">Substrate</div><div class="val">${REACTIONS[currentPage]?.formula || ''}</div></div><div class="over-arrow"><div class="cond-text">${rxn.conditions}</div><div class="arrow-line">──────→</div><div class="cond-text" style="color:${color};font-size:0.65rem">${rxn.type}</div></div><div class="rxn-box" style="border-color:${color}44"><div class="label">Product</div><div class="val" style="color:${color}">${rxn.product}</div></div></div><div class="rxn-tags">${tagHtml}</div>${mechHtml}</div></div>`;
-}
-
-function toggleCard(id) { const c = document.getElementById('card-' + id); if (c) c.classList.toggle('expanded'); }
-function toggleMech(id) {
-  const body = document.getElementById('mech-' + id);
-  const toggle = document.getElementById('mech-toggle-' + id);
-  if (body && toggle) {
-    const isOpen = body.classList.toggle('open');
-    toggle.classList.toggle('open', isOpen);
-    toggle.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>${isOpen ? 'Hide' : 'Show'} Mechanism`;
-  }
-}
-
-const searchInput = document.getElementById('searchInput');
-const searchResultsEl = document.getElementById('search-results');
-searchInput.addEventListener('input', () => {
-  const q = searchInput.value.toLowerCase().trim();
-  if (q.length < 2) { searchResultsEl.classList.remove('active'); return; }
-  const matches = searchIndex.filter(r => r.reagent.toLowerCase().includes(q) || r.product.toLowerCase().includes(q) || r.section.toLowerCase().includes(q) || r.conditions.toLowerCase().includes(q)).slice(0, 8);
-  if (!matches.length) { searchResultsEl.classList.remove('active'); return; }
-  searchResultsEl.innerHTML = matches.map(m => `<div class="sr-item" onclick="searchNav('${m.pageKey}','${m.cls}','${m.id}')"><div class="sr-name">${m.reagent} → ${m.product.split('(')[0].trim()}</div><div class="sr-sub">${m.label} · ${m.section}</div></div>`).join('');
-  searchResultsEl.classList.add('active');
-});
-
-function searchNav(pageKey, cls, id) {
-  searchResultsEl.classList.remove('active'); searchInput.value = '';
-  currentPage = pageKey; currentClass = cls === 'all' ? null : cls;
-  render(); updateSidebar();
-  setTimeout(() => { const el = document.getElementById('card-' + id); if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.add('expanded'); } }, 100);
-}
-document.addEventListener('click', (e) => { if (!e.target.closest('.search-wrap')) searchResultsEl.classList.remove('active'); });
-
-// ── Auth ──
-const PASSWORDS = { student: 'react2025', team: 'atlas#admin' };
-let resolvedStudentHash = '', resolvedTeamHash = '';
-async function sha256(str) { const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)); return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join(''); }
-(async () => { resolvedStudentHash = await sha256(PASSWORDS.student); resolvedTeamHash = await sha256(PASSWORDS.team); })();
-
-let sessionMode = null;
-let timerSeconds = 30 * 60;
-let timerInterval = null;
-let sessionActive = false;
-
-function toggleGateEye() { const inp = document.getElementById('gateInput'); const eye = document.getElementById('gateEye'); inp.type = inp.type === 'password' ? 'text' : 'password'; eye.textContent = inp.type === 'password' ? '👁' : '🙈'; }
-
-async function gateSubmit() {
-  const val = document.getElementById('gateInput').value.trim();
-  const inp = document.getElementById('gateInput');
-  if (!val) { showGateError('Please enter a passcode.'); return; }
-  const entered = await sha256(val);
-  if (entered === resolvedStudentHash) { startSession('student'); }
-  else if (entered === resolvedTeamHash) { startSession('team'); }
-  else { showGateError('Incorrect passcode. Try again.'); inp.classList.add('error'); setTimeout(() => inp.classList.remove('error'), 600); inp.value = ''; }
-}
-
-function showGateError(msg) { const el = document.getElementById('gateErr'); el.textContent = msg; setTimeout(() => { el.textContent = ''; }, 2500); }
-
-function showGate() {
-  document.getElementById('expired-overlay').classList.remove('active');
-  document.body.classList.remove('session-expired', 'student-blur', 'sp');
-  document.getElementById('gate').classList.remove('hidden');
-  document.getElementById('gateInput').value = '';
-  document.getElementById('gateErr').textContent = '';
-  sessionActive = false; sessionMode = null;
-  if (timerInterval) clearInterval(timerInterval);
-  document.getElementById('timer-wrap').classList.remove('visible');
-  // Clean up protection
-  const wm = document.getElementById('_swm'); if (wm) wm.remove();
-  const sh = document.getElementById('ultra-shield'); if (sh) sh.classList.remove('active');
-}
-
-function startSession(mode) {
-  sessionMode = mode; sessionActive = true;
-  document.getElementById('gate').classList.add('hidden');
-  document.getElementById('expired-overlay').classList.remove('active');
-  document.body.classList.remove('session-expired', 'student-blur');
-  if (mode === 'student') {
-    document.body.classList.add('sp');
-    timerSeconds = 30 * 60;
-    document.getElementById('timer-wrap').classList.add('visible');
-    updateTimerDisplay();
-    timerInterval = setInterval(tickTimer, 1000);
-    document.addEventListener('visibilitychange', onVisibilityChange);
-    injectWatermark();
-    // Pre-build shield
-    document.getElementById('ultra-shield').classList.remove('active');
-  } else {
-    document.body.classList.remove('sp');
-    document.getElementById('timer-wrap').classList.remove('visible');
-  }
-}
-
-function tickTimer() { if (!sessionActive) return; timerSeconds--; if (timerSeconds <= 0) { expireSession(); return; } updateTimerDisplay(); }
-
-function updateTimerDisplay() {
-  const m = Math.floor(timerSeconds / 60), s = timerSeconds % 60;
-  const display = document.getElementById('timer-display');
-  display.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
-  display.classList.remove('warning','danger');
-  if (timerSeconds <= 60) display.classList.add('danger');
-  else if (timerSeconds <= 300) display.classList.add('warning');
-  const canvas = document.getElementById('timer-canvas');
-  const ctx = canvas.getContext('2d');
-  const frac = timerSeconds / (30*60), cx = 16, cy = 16, r = 13;
-  ctx.clearRect(0,0,32,32);
-  ctx.beginPath(); ctx.arc(cx,cy,r,0,2*Math.PI); ctx.strokeStyle='rgba(255,255,255,0.07)'; ctx.lineWidth=3; ctx.stroke();
-  ctx.beginPath(); ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+frac*2*Math.PI); ctx.strokeStyle=timerSeconds<=60?'#f7706a':timerSeconds<=300?'#f7c56a':'#4ecb8d'; ctx.lineWidth=3; ctx.lineCap='round'; ctx.stroke();
-}
-
-function expireSession() {
-  clearInterval(timerInterval); sessionActive = false;
-  document.body.classList.add('session-expired');
-  document.getElementById('expired-overlay').classList.add('active');
-  document.removeEventListener('visibilitychange', onVisibilityChange);
-  document.getElementById('timer-display').textContent = '00:00';
-}
-
-function onVisibilityChange() {
-  if (sessionMode !== 'student') return;
-  if (document.hidden) { document.body.classList.add('student-blur'); showShield(0); }
-  else { setTimeout(() => { document.body.classList.remove('student-blur'); hideShield(); }, 800); }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// ULTRA SCREENSHOT PROTECTION — 16-LAYER MOBILE + DESKTOP SYSTEM
-// ═══════════════════════════════════════════════════════════════════
-
-// ── Shield control (the full-screen blackout) ──
-let _shieldTimer = null;
-function showShield(duration) {
-  if (sessionMode !== 'student') return;
-  const s = document.getElementById('ultra-shield');
-  s.classList.add('active');
-  clearTimeout(_shieldTimer);
-  if (duration > 0) _shieldTimer = setTimeout(hideShield, duration);
-}
-function hideShield() {
-  const s = document.getElementById('ultra-shield');
-  if (s) s.classList.remove('active');
-}
-
-// ── Layer 1: Visibility change — app switcher / iOS screenshot preview ──
-document.addEventListener('visibilitychange', () => {
-  if (sessionMode !== 'student') return;
-  if (document.hidden) showShield(0);
-  else setTimeout(hideShield, 700);
-});
-
-// ── Layer 2: pagehide / pageshow ──
-window.addEventListener('pagehide', () => { if (sessionMode === 'student') showShield(0); });
-window.addEventListener('pageshow', () => { if (sessionMode === 'student') setTimeout(hideShield, 500); });
-
-// ── Layer 3: Window blur / focus (switching apps, screenshot toolbar) ──
-window.addEventListener('blur', () => { if (sessionMode === 'student') showShield(0); });
-window.addEventListener('focus', () => { if (sessionMode === 'student') setTimeout(hideShield, 600); });
-
-// ── Layer 4: Long press detection (iOS hold-to-save, Android magnifier) ──
-let _lpTimer = null;
-document.addEventListener('touchstart', (e) => {
-  if (sessionMode !== 'student') return;
-  clearTimeout(_lpTimer);
-  // Long press > 320ms = likely hold gesture; show shield
-  _lpTimer = setTimeout(() => showShield(2000), 320);
-}, { passive: true });
-['touchend', 'touchcancel', 'touchmove'].forEach(ev =>
-  document.addEventListener(ev, () => clearTimeout(_lpTimer), { passive: true })
+// Long-press: iOS hold-to-save / Android magnifier
+let _lp=null;
+document.addEventListener('touchstart',e=>{
+  if(sessionMode!=='student')return;
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+  clearTimeout(_lp);
+  _lp=setTimeout(showShield,300);
+},{passive:true,capture:true});
+['touchend','touchcancel','touchmove'].forEach(ev=>
+  document.addEventListener(ev,()=>clearTimeout(_lp),{passive:true,capture:true})
 );
 
-// ── Layer 5: Multi-finger tap (Android 3-finger screenshot shortcut) ──
-document.addEventListener('touchstart', (e) => {
-  if (sessionMode !== 'student') return;
-  if (e.touches.length >= 3) showShield(2500);
-}, { passive: true });
+// Resize: iOS ~1px status-bar blink on screenshot
+let _lw=window.innerWidth,_lh=window.innerHeight;
+window.addEventListener('resize',()=>{
+  if(sessionMode!=='student')return;
+  const dh=Math.abs(window.innerHeight-_lh),dw=Math.abs(window.innerWidth-_lw);
+  if((dh>0&&dh<30)||(dw>0&&dw<30))showShield();
+  else hideShield(400);
+  _lw=window.innerWidth;_lh=window.innerHeight;
+},{passive:true});
 
-// ── Layer 6: Resize flash detection (iOS causes ~1-2px status bar resize on screenshot) ──
-let _lastW = window.innerWidth, _lastH = window.innerHeight;
-window.addEventListener('resize', () => {
-  if (sessionMode !== 'student') return;
-  const dh = Math.abs(window.innerHeight - _lastH);
-  const dw = Math.abs(window.innerWidth - _lastW);
-  // Small delta = status bar flash on iOS screenshot
-  if ((dh > 0 && dh < 25) || (dw > 0 && dw < 25)) showShield(1500);
-  _lastW = window.innerWidth; _lastH = window.innerHeight;
-});
+// Orientation
+window.addEventListener('orientationchange',()=>{
+  if(sessionMode!=='student')return;
+  showShield();hideShield(1000);
+},{passive:true});
 
-// ── Layer 7: Orientation change ──
-window.addEventListener('orientationchange', () => {
-  if (sessionMode !== 'student') return;
-  showShield(1200);
-});
+// DevTools (desktop)
+setInterval(()=>{
+  if(sessionMode!=='student')return;
+  const open=(window.outerWidth-window.innerWidth>160)||(window.outerHeight-window.innerHeight>160);
+  if(open)showShield();
+  else if(shield.classList.contains('active')&&!document.hidden&&document.hasFocus())hideShield(200);
+},800);
 
-// ── Layer 8: getDisplayMedia screen recording interception ──
-if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-  const _origGDM = navigator.mediaDevices.getDisplayMedia.bind(navigator.mediaDevices);
-  navigator.mediaDevices.getDisplayMedia = async function(...args) {
-    if (sessionMode === 'student') {
-      showShield(3000);
-      throw new DOMException('Screen capture blocked by content protection.', 'NotAllowedError');
-    }
-    return _origGDM(...args);
+// Screen recording API
+if(navigator.mediaDevices?.getDisplayMedia){
+  const _o=navigator.mediaDevices.getDisplayMedia.bind(navigator.mediaDevices);
+  navigator.mediaDevices.getDisplayMedia=async(...a)=>{
+    if(sessionMode==='student'){showShield();hideShield(3000);throw new DOMException('Blocked','NotAllowedError');}
+    return _o(...a);
   };
 }
 
-// ── Layer 9: getUserMedia (some screen-cast apps use this) ──
-if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-  const _origGUM = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
-  navigator.mediaDevices.getUserMedia = async function(constraints) {
-    if (sessionMode === 'student' && constraints && (constraints.video === true || (constraints.video && constraints.video.mediaSource === 'screen'))) {
-      showShield(2000);
-      throw new DOMException('Blocked.', 'NotAllowedError');
-    }
-    return _origGUM(constraints);
-  };
-}
+// Keyboard shortcuts — capture phase
+document.addEventListener('keydown',e=>{
+  if(sessionMode!=='student')return;
+  const k=e.key,c=e.ctrlKey||e.metaKey,s=e.shiftKey;
+  const bad=k==='PrintScreen'||k==='F12'||k==='F11'||
+    (c&&['p','s','u'].includes(k.toLowerCase()))||
+    (c&&s&&['s','i','j','c','u','k','p','r','3','4','5','6'].includes(k.toLowerCase()));
+  if(bad){e.preventDefault();e.stopImmediatePropagation();showShield();hideShield(2000);}
+},true);
 
-// ── Layer 10: DevTools size detection ──
-setInterval(() => {
-  if (sessionMode !== 'student') return;
-  const open = (window.outerWidth - window.innerWidth > 160) || (window.outerHeight - window.innerHeight > 160);
-  if (open) showShield(0); else hideShield();
-}, 800);
+document.addEventListener('keyup',e=>{
+  if(sessionMode!=='student')return;
+  if(e.key==='PrintScreen'){e.preventDefault();showShield();hideShield(2000);try{navigator.clipboard.writeText('');}catch(_){}}
+},true);
 
-// ── Layer 11: Keyboard shortcuts (capture phase — fires before page handlers) ──
-document.addEventListener('keydown', (e) => {
-  if (sessionMode !== 'student') return;
-  const k = e.key.toLowerCase();
-  const c = e.ctrlKey || e.metaKey, s = e.shiftKey;
-  const blocked =
-    e.key === 'PrintScreen' || e.key === 'F12' || e.key === 'F11' ||
-    (c && k === 'p') || (c && k === 's') || (c && k === 'u') ||
-    (c && s && (k==='s'||k==='i'||k==='j'||k==='c'||k==='u'||k==='k'||k==='p'||k==='r')) ||
-    (c && s && (k==='3'||k==='4'||k==='5'||k==='6')); // macOS screenshot shortcuts
-  if (blocked) { e.preventDefault(); e.stopPropagation(); showShield(2000); }
-}, true); // capture phase
-
-// ── Layer 12: keyup PrintScreen (Windows fires on keyup) ──
-document.addEventListener('keyup', (e) => {
-  if (sessionMode !== 'student') return;
-  if (e.key === 'PrintScreen') {
-    e.preventDefault(); showShield(2000);
-    try { navigator.clipboard.writeText(''); } catch(_) {}
-  }
-}, true);
-
-// ── Layer 13: Context menu ──
-document.addEventListener('contextmenu', (e) => {
-  if (sessionMode !== 'student') return;
-  e.preventDefault(); showShield(1500);
+// Context menu, copy, cut, drag, select
+document.addEventListener('contextmenu',e=>{if(sessionMode==='student'){e.preventDefault();showShield();hideShield(1500);}});
+document.addEventListener('copy',e=>{if(sessionMode==='student'){e.preventDefault();try{e.clipboardData.setData('text/plain','');}catch(_){}}});
+document.addEventListener('cut',e=>{if(sessionMode==='student')e.preventDefault();});
+document.addEventListener('dragstart',e=>{if(sessionMode==='student')e.preventDefault();});
+document.addEventListener('selectstart',e=>{
+  if(sessionMode!=='student')return;
+  if(e.target.tagName!=='INPUT'&&e.target.tagName!=='TEXTAREA')e.preventDefault();
 });
 
-// ── Layer 14: Clipboard interception ──
-document.addEventListener('copy', (e) => {
-  if (sessionMode !== 'student') return;
-  e.preventDefault();
-  try { e.clipboardData.setData('text/plain', ''); } catch(_) {}
-});
-document.addEventListener('cut', (e) => { if (sessionMode === 'student') e.preventDefault(); });
-
-// ── Layer 15: Selection and drag prevention ──
-document.addEventListener('selectstart', (e) => {
-  if (sessionMode !== 'student') return;
-  if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault();
-});
-document.addEventListener('dragstart', (e) => { if (sessionMode === 'student') e.preventDefault(); });
-
-// ── Layer 16: iOS Safari — prevent magnifier loupe (used to inspect/zoom content) ──
-document.addEventListener('touchstart', (e) => {
-  if (sessionMode !== 'student') return;
-  if (e.touches.length === 1 && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-    // Temporarily remove user-select to suppress the loupe, but the class handles it already
-    e.target.style.webkitUserSelect = 'none';
-    setTimeout(() => { if (e.target.style) e.target.style.webkitUserSelect = ''; }, 300);
-  }
-}, { passive: true });
-
-// ── Watermark injection ──
-function injectWatermark() {
-  const old = document.getElementById('_swm'); if (old) old.remove();
-  if (sessionMode !== 'student') return;
-  const id = Math.random().toString(36).slice(2, 7).toUpperCase();
-  const ts = new Date().toLocaleTimeString();
-  const wm = document.createElement('div');
-  wm.id = '_swm';
-  const txt = 'STUDENT \u00B7 ' + id + ' \u00B7 ' + ts;
-  for (let i = 0; i < 15; i++) {
-    const d = document.createElement('div');
-    d.style.cssText = 'display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:10px;color:#fff;transform:rotate('+([-25,-10,10][i%3])+'deg);white-space:nowrap';
-    d.textContent = txt;
-    wm.appendChild(d);
+// ════════════════════════════════════════════════════════
+// WATERMARK
+// ════════════════════════════════════════════════════════
+function injectWatermark(){
+  const old=document.getElementById('_swm');if(old)old.remove();
+  if(sessionMode!=='student')return;
+  const id=Math.random().toString(36).slice(2,7).toUpperCase(),ts=new Date().toLocaleTimeString();
+  const wm=document.createElement('div');wm.id='_swm';
+  const txt='STUDENT \u00B7 '+id+' \u00B7 '+ts;
+  for(let i=0;i<15;i++){
+    const d=document.createElement('div');
+    d.style.cssText='display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:10px;color:#fff;transform:rotate('+([-25,-10,10][i%3])+'deg);white-space:nowrap;pointer-events:none';
+    d.textContent=txt;wm.appendChild(d);
   }
   document.documentElement.appendChild(wm);
 }
-// Rotate watermark ID every 25 seconds
-setInterval(() => { if (sessionMode === 'student') injectWatermark(); }, 25000);
+setInterval(()=>{if(sessionMode==='student')injectWatermark();},25000);
 
-// ── Legacy triggerSSBlock kept for compatibility ──
-let ssBlockTimeout = null;
-function triggerSSBlock() {
-  showShield(2000);
-  const el = document.getElementById('ss-block');
-  el.classList.add('active');
-  if (ssBlockTimeout) clearTimeout(ssBlockTimeout);
-  ssBlockTimeout = setTimeout(() => el.classList.remove('active'), 2000);
+// ════════════════════════════════════════════════════════
+// GATE / SESSION
+// ════════════════════════════════════════════════════════
+const gateEl=document.getElementById('gate');
+const gateInput=document.getElementById('gateInput');
+const gateEye=document.getElementById('gateEye');
+const gateErr=document.getElementById('gateErr');
+const expiredOverlay=document.getElementById('expired-overlay');
+
+gateEye.addEventListener('click',()=>{
+  gateInput.type=gateInput.type==='password'?'text':'password';
+  gateEye.textContent=gateInput.type==='password'?'👁':'🙈';
+});
+document.getElementById('gateBtn').addEventListener('click',gateSubmit);
+gateInput.addEventListener('keydown',e=>{if(e.key==='Enter')gateSubmit();});
+document.getElementById('expBtn').addEventListener('click',showGate);
+
+async function gateSubmit(){
+  const val=gateInput.value.trim();
+  if(!val){showGateError('Please enter a passcode.');return;}
+  const h=await sha256(val);
+  if(h===HASHES.student)startSession('student');
+  else if(h===HASHES.team)startSession('team');
+  else{
+    showGateError('Incorrect passcode. Try again.');
+    gateInput.classList.add('error');
+    setTimeout(()=>gateInput.classList.remove('error'),600);
+    gateInput.value='';
+  }
+}
+function showGateError(msg){gateErr.textContent=msg;setTimeout(()=>{gateErr.textContent='';},2500);}
+
+function showGate(){
+  expiredOverlay.classList.remove('active');
+  document.body.classList.remove('sp','shield-active');
+  shield.classList.remove('active');
+  gateEl.classList.remove('hidden');
+  gateInput.value='';gateErr.textContent='';
+  sessionActive=false;sessionMode=null;
+  if(timerInterval)clearInterval(timerInterval);
+  document.getElementById('timer-wrap').classList.remove('visible');
+  const wm=document.getElementById('_swm');if(wm)wm.remove();
 }
 
+function startSession(mode){
+  sessionMode=mode;sessionActive=true;
+  gateEl.classList.add('hidden');
+  expiredOverlay.classList.remove('active');
+  if(mode==='student'){
+    document.body.classList.add('sp');
+    timerSeconds=30*60;
+    document.getElementById('timer-wrap').classList.add('visible');
+    updateTimerDisplay();
+    timerInterval=setInterval(tickTimer,1000);
+    injectWatermark();
+    hideShield(100);
+  } else {
+    document.body.classList.remove('sp');
+    document.getElementById('timer-wrap').classList.remove('visible');
+    shield.classList.remove('active');
+  }
+}
+
+function tickTimer(){
+  if(!sessionActive)return;
+  timerSeconds--;
+  if(timerSeconds<=0){expireSession();return;}
+  updateTimerDisplay();
+}
+
+function updateTimerDisplay(){
+  const m=Math.floor(timerSeconds/60),s=timerSeconds%60;
+  const d=document.getElementById('timer-display');
+  d.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  d.classList.remove('warning','danger');
+  if(timerSeconds<=60)d.classList.add('danger');
+  else if(timerSeconds<=300)d.classList.add('warning');
+  const c=document.getElementById('timer-canvas');
+  const ctx=c.getContext('2d');
+  const frac=timerSeconds/(30*60),cx=16,cy=16,r=13;
+  ctx.clearRect(0,0,32,32);
+  ctx.beginPath();ctx.arc(cx,cy,r,0,2*Math.PI);ctx.strokeStyle='rgba(255,255,255,.07)';ctx.lineWidth=3;ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+frac*2*Math.PI);
+  ctx.strokeStyle=timerSeconds<=60?'#f7706a':timerSeconds<=300?'#f7c56a':'#4ecb8d';
+  ctx.lineWidth=3;ctx.lineCap='round';ctx.stroke();
+}
+
+function expireSession(){
+  clearInterval(timerInterval);sessionActive=false;
+  document.body.classList.add('shield-active');
+  expiredOverlay.classList.add('active');
+  document.getElementById('timer-display').textContent='00:00';
+}
+
+// ════════════════════════════════════════════════════════
+// MOBILE SIDEBAR
+// ════════════════════════════════════════════════════════
+const hamburger=document.getElementById('hamburger');
+const sidebar=document.getElementById('sidebar');
+const sidebarOverlay=document.getElementById('sidebarOverlay');
+
+hamburger.addEventListener('click',()=>{
+  sidebarOpen=!sidebarOpen;
+  sidebar.classList.toggle('mobile-open',sidebarOpen);
+  sidebarOverlay.classList.toggle('open',sidebarOpen);
+  hamburger.classList.toggle('open',sidebarOpen);
+});
+sidebarOverlay.addEventListener('click',closeMobileSidebar);
+function closeMobileSidebar(){
+  sidebarOpen=false;
+  sidebar.classList.remove('mobile-open');
+  sidebarOverlay.classList.remove('open');
+  hamburger.classList.remove('open');
+}
+
+// ════════════════════════════════════════════════════════
+// NAVIGATION — event delegation on sidebar, no inline onclick
+// ════════════════════════════════════════════════════════
+function nav(page,cls){
+  currentPage=page;currentClass=cls||null;
+  render();updateSidebar();closeMobileSidebar();
+  document.getElementById('main').scrollTo(0,0);
+}
+function updateSidebar(){
+  document.querySelectorAll('.sidebar-item[data-nav]').forEach(el=>
+    el.classList.toggle('active',el.dataset.nav===currentPage&&!currentClass));
+  document.querySelectorAll('.sidebar-sub[data-nav]').forEach(el=>
+    el.classList.toggle('active',el.dataset.nav===currentPage&&el.dataset.class===currentClass));
+}
+sidebar.addEventListener('click',e=>{
+  const el=e.target.closest('[data-nav]');
+  if(el)nav(el.dataset.nav,el.dataset.class||null);
+});
+
+// ════════════════════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════════════════════
+function esc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function render(){
+  const main=document.getElementById('main');
+  if(currentPage==='home'){main.innerHTML=renderHome();return;}
+  const page=REACTIONS[currentPage];
+  if(!page){main.innerHTML='<div class="empty">Page not found.</div>';return;}
+  if(page.classes&&!currentClass){
+    main.innerHTML=renderPageHero(page)+renderClassSelector(page);
+  } else {
+    const cls=currentClass||'all';
+    const rxns=page.data[cls]||[];
+    main.innerHTML=renderPageHero(page,cls)+renderMindMap(rxns,page.color);
+  }
+}
+
+// Delegated click handler on main — covers home cards, class tabs, breadcrumbs, card headers, mech toggles
+document.getElementById('main').addEventListener('click',e=>{
+  const homeCard=e.target.closest('.home-card[data-nav]');
+  if(homeCard){nav(homeCard.dataset.nav,homeCard.dataset.class||null);return;}
+
+  const classTab=e.target.closest('.class-tab[data-class]');
+  if(classTab){nav(currentPage,classTab.dataset.class);return;}
+
+  const crumb=e.target.closest('[data-crumb]');
+  if(crumb){nav(crumb.dataset.crumb,null);return;}
+
+  const header=e.target.closest('.rxn-card-header');
+  if(header){header.closest('.rxn-card')?.classList.toggle('expanded');return;}
+
+  const mech=e.target.closest('.mech-toggle[data-mech]');
+  if(mech){
+    const id=mech.dataset.mech;
+    const body=document.getElementById('mech-'+id);
+    const open=body.classList.toggle('open');
+    mech.classList.toggle('open',open);
+    mech.querySelector('.mech-label').textContent=open?'Hide Mechanism':'Show Mechanism';
+  }
+});
+
+function renderHome(){
+  const cards=[
+    {key:'alcohol',icon:'🧪',desc:'Primary, Secondary, Tertiary reactions, Oxidation, Esterification, Dehydration',count:'20+'},
+    {key:'alkane',icon:'⛽',desc:'Free radical halogenation, Combustion, Wurtz, Kolbe, Cracking',count:'9'},
+    {key:'alkene',icon:'🔗',desc:'Electrophilic addition, Ozonolysis, Diels-Alder, Hydroboration',count:'14'},
+    {key:'alkyne',icon:'⚡',desc:'Acidic nature, Lindlar, Na/NH₃, Hydration, Cycloaddition',count:'11'},
+    {key:'alkyl-halide',icon:'🧲',desc:'SN1, SN2, E1/E2, Grignard, Gilman, Finkelstein, Wurtz',count:'22'},
+    {key:'aryl-halide',icon:'🔮',desc:'SNAr, Benzyne, Sandmeyer, Ullmann, Coupling',count:'10'},
+  ];
+  return `<div class="page-hero"><h1>Organic Reaction<br>Atlas</h1><p>JEE Advanced — comprehensive reaction mind map.<br>Click any substrate to explore reactions.</p></div>
+  <div class="home-grid">${cards.map(c=>{const p=REACTIONS[c.key];return`<div class="home-card" style="--card-color:${p.color}" data-nav="${esc(c.key)}"><div class="home-card-icon">${c.icon}</div><h3>${p.label}</h3><p>${c.desc}</p><div class="rxn-count" style="color:${p.color}">${c.count} reactions</div></div>`;}).join('')}</div>
+  <div style="margin-top:2rem;padding:1.2rem;background:var(--surface);border:1px solid var(--border);border-radius:12px;font-size:.8rem;color:var(--muted);line-height:1.7"><strong style="color:var(--accent2)">★ How to use:</strong> Click a substrate → select the reaction class → click any card to expand product + mechanism → toggle the mechanism dropdown for step-by-step notes. Use the search bar to find any reagent or product instantly.</div>`;
+}
+
+function renderPageHero(page,cls){
+  const clsLabel=cls?(cls==='primary'?'1° Primary':cls==='secondary'?'2° Secondary':cls==='tertiary'?'3° Tertiary':cls):'';
+  const tabsHtml=page.classes?`<div class="class-tabs">${page.classes.map(c=>{
+    const lbl=c==='primary'?'1° Primary':c==='secondary'?'2° Secondary':c==='tertiary'?'3° Tertiary':c==='E2'?'E1/E2':c==='organometal'?'Organometallics':c;
+    return`<div class="class-tab${currentClass===c?' active':''}" data-class="${esc(c)}">${lbl}</div>`;
+  }).join('')}</div>`:'';
+  return`<div class="breadcrumb"><span data-crumb="home">Home</span><span class="sep">›</span><span ${!cls?'class="current"':`data-crumb="${esc(currentPage)}"`}>${page.label}</span>${cls?`<span class="sep">›</span><span class="current">${clsLabel}</span>`:''}</div>
+  <div class="page-hero"><h1 style="color:${page.color}">${page.label}</h1><div class="formula">${page.formula}</div><p style="margin-top:.5rem">${page.description}</p>${tabsHtml}</div>`;
+}
+
+function renderClassSelector(page){
+  const labels={primary:'1° Primary',secondary:'2° Secondary',tertiary:'3° Tertiary',SN1:'SN1 Reactions',SN2:'SN2 Reactions',E2:'E1/E2 Eliminations',organometal:'Organometallics'};
+  const descs={primary:'Oxidation to aldehyde/acid, SOCl₂, HX, dehydration',secondary:'Oxidation to ketone, Lucas test, Oppenauer, Iodoform',tertiary:'Pinacol, Wagner-Meerwein, SN1, dehydration (easiest)',SN1:'Unimolecular, carbocation, racemisation, rearrangements',SN2:'Bimolecular, backside attack, inversion, no rearrangement',E2:'Anti-periplanar, Saytzeff/Hofmann, stereospecific, E1',organometal:'Grignard, Gilman, Wurtz, Corey-House coupling'};
+  return`<div class="home-grid">${page.classes.map(c=>`<div class="home-card" style="--card-color:${page.color}" data-nav="${esc(currentPage)}" data-class="${esc(c)}"><div class="home-card-icon">⚗️</div><h3>${labels[c]||c}</h3><p>${descs[c]||''}</p><div class="rxn-count" style="color:${page.color}">${(page.data[c]||[]).length} reactions</div></div>`).join('')}</div>`;
+}
+
+function renderMindMap(rxns,color){
+  if(!rxns.length)return'<div class="empty">No reactions found.</div>';
+  const sections={};
+  rxns.forEach(r=>{if(!sections[r.section])sections[r.section]=[];sections[r.section].push(r);});
+  let html='<div class="mind-map">';
+  Object.entries(sections).forEach(([sec,items])=>{
+    html+=`<div class="section-head"><h2>${sec}</h2><div class="pill" style="background:${color}22;color:${color};border:1px solid ${color}44">${items.length}</div><div class="section-line"></div></div>`;
+    items.forEach((rxn,i)=>html+=renderCard(rxn,color,i+1));
+  });
+  return html+'</div>';
+}
+
+function renderCard(rxn,color,num){
+  const page=REACTIONS[currentPage];
+  const tagHtml=rxn.tags.map(t=>{
+    let c='tag-type';
+    if(t==='JEE Adv')c='tag-jee';
+    else if(t==='Must Know')c='tag-imp';
+    else if(t==='★ Classic')c='tag-green';
+    return`<span class="tag ${c}">${t}</span>`;
+  }).join('');
+  const mechHtml=rxn.mechanism?`
+    <div class="mech-toggle" data-mech="${esc(rxn.id)}">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      <span class="mech-label">Show Mechanism</span>
+    </div>
+    <div class="mech-body" id="mech-${esc(rxn.id)}">
+      ${rxn.mechanism.map((s,i)=>`<div class="mech-step"><div class="mech-step-num">${i+1}</div><div class="mech-step-text">${s.step}</div></div>`).join('')}
+      ${rxn.note?`<div class="mech-note">💡 ${rxn.note}</div>`:''}
+    </div>`:'';
+  return`<div class="rxn-card" id="card-${esc(rxn.id)}">
+    <div class="rxn-card-header">
+      <div class="rxn-left">
+        <div class="rxn-num" style="background:${color}22;color:${color}">${num}</div>
+        <div class="rxn-reagent-row">
+          <div class="rxn-reagent">${rxn.reagent}</div>
+          <div class="rxn-conditions">${rxn.conditions}</div>
+        </div>
+      </div>
+      <div class="rxn-arrow">→</div>
+      <div class="rxn-product-preview" style="color:${color}">${rxn.product.split('(')[0].trim()}</div>
+      <div class="rxn-expand-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+    </div>
+    <div class="rxn-body">
+      <div class="rxn-full">
+        <div class="rxn-box"><div class="label">Substrate</div><div class="val">${page?page.formula:''}</div></div>
+        <div class="over-arrow"><div class="cond-text">${rxn.conditions}</div><div class="arrow-line">──────→</div><div class="cond-text" style="color:${color};font-size:.65rem">${rxn.type}</div></div>
+        <div class="rxn-box" style="border-color:${color}44"><div class="label">Product</div><div class="val" style="color:${color}">${rxn.product}</div></div>
+      </div>
+      <div class="rxn-tags">${tagHtml}</div>
+      ${mechHtml}
+    </div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════════════════
+// SEARCH — event delegation, safe data-* attributes
+// ════════════════════════════════════════════════════════
+const searchInput=document.getElementById('searchInput');
+const searchResultsEl=document.getElementById('search-results');
+
+searchInput.addEventListener('input',()=>{
+  const q=searchInput.value.toLowerCase().trim();
+  if(q.length<2){searchResultsEl.classList.remove('active');return;}
+  const matches=searchIndex.filter(r=>
+    r.reagent.toLowerCase().includes(q)||r.product.toLowerCase().includes(q)||
+    r.section.toLowerCase().includes(q)||r.conditions.toLowerCase().includes(q)
+  ).slice(0,8);
+  if(!matches.length){searchResultsEl.classList.remove('active');return;}
+  searchResultsEl.innerHTML=matches.map(m=>
+    `<div class="sr-item" data-page="${esc(m.pageKey)}" data-cls="${esc(m.cls)}" data-id="${esc(m.id)}">
+      <div class="sr-name">${m.reagent} → ${m.product.split('(')[0].trim()}</div>
+      <div class="sr-sub">${m.label} · ${m.section}</div>
+    </div>`
+  ).join('');
+  searchResultsEl.classList.add('active');
+});
+
+searchResultsEl.addEventListener('click',e=>{
+  const item=e.target.closest('.sr-item');if(!item)return;
+  const{page,cls,id}=item.dataset;
+  searchResultsEl.classList.remove('active');searchInput.value='';
+  currentPage=page;currentClass=cls==='all'?null:cls;
+  render();updateSidebar();
+  setTimeout(()=>{
+    const el=document.getElementById('card-'+id);
+    if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.add('expanded');}
+  },100);
+});
+
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.search-wrap'))searchResultsEl.classList.remove('active');
+});
+
+// ════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════
 render();
 updateSidebar();
-setTimeout(updateTimerDisplay, 100);
+updateTimerDisplay();
 </script>
 </body>
 </html>
